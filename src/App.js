@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import { Button } from "@mantine/core";
+import { ethers } from "ethers";
+import { useState } from "react";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+const App = () => {
+  const [currentAccount, setCurrentAccount] = useState(null);
+
+  const connectWallet = async () => {
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: process.env.REACT_APP_INFURA_ID,
+        },
+      },
+    };
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      providerOptions,
+    });
+    const instance = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(instance);
+    const accounts = await provider.send("eth_requestAccounts");
+    if (accounts.length) {
+      setCurrentAccount(accounts[0]);
+    }
+  };
+
+  return currentAccount ? (
+    currentAccount
+  ) : (
+    <Button onClick={connectWallet}>Connect Wallet</Button>
   );
-}
+};
 
 export default App;
