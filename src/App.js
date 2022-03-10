@@ -1,9 +1,8 @@
-import { Button } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { UploadFile } from "./components/UploadFile";
 import { getArcanaAuth } from "./utils/arcana";
 import { SocialLoginType } from "@arcana/auth";
 
@@ -54,17 +53,22 @@ const App = () => {
 
   return (
     <>
-      {polygonAccount ? (
-        "Connected to Polygon: " + polygonAccount
-      ) : (
-        <Button onClick={connectWallet}>Connect Wallet</Button>
-      )}
-      <UploadFile />
-      {arcanaAccount ? (
-        "Connected to Arcana: " + arcanaAccount.userInfo.email
-      ) : (
-        <Button onClick={connectArcana}>Connect Arcana</Button>
-      )}
+      <Group>
+        <Group>
+          {polygonAccount ? (
+            <Text>Connected to Polygon: {polygonAccount}</Text>
+          ) : (
+            <Button onClick={connectWallet}>Connect Wallet</Button>
+          )}
+        </Group>
+        <Group>
+          {arcanaAccount ? (
+            <Text>Connected to Arcana: {arcanaAccount.userInfo.email}</Text>
+          ) : (
+            <Button onClick={connectArcana}>Connect Arcana</Button>
+          )}
+        </Group>
+      </Group>
     </>
   );
 };
