@@ -11,19 +11,22 @@ import { getArcanaAuth } from "./utils/arcana";
 const App = () => {
   const [polygonAccount, setPolygonAccount] = useState(null);
   const [arcanaAccount, setArcanaAccount] = useState(null);
-  const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
 
   // Check if user is logged in to Arcana
   useEffect(() => {
+    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
       console.log(userInfo);
       setArcanaAccount(userInfo);
     }
-  }, [arcanaAuth]);
+  }, []);
 
   // Connect to Arcana using social auth
   const connectArcana = async () => {
+    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
