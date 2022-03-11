@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { SocialLoginType } from "@arcana/auth";
 
 import { getArcanaAuth } from "./utils/arcana";
+import { UploadFile } from "./components/UploadFile";
 
 const App = () => {
   const [polygonAccount, setPolygonAccount] = useState(null);
@@ -18,7 +19,6 @@ const App = () => {
 
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      console.log(userInfo);
       setArcanaAccount(userInfo);
     }
   }, []);
@@ -30,7 +30,6 @@ const App = () => {
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      console.log(userInfo);
       setArcanaAccount(userInfo);
     }
   };
@@ -58,7 +57,7 @@ const App = () => {
 
   return (
     <>
-      <Group>
+      <Group direction="column">
         <Group>
           {polygonAccount ? (
             <Text>Connected to Polygon: {polygonAccount}</Text>
@@ -73,6 +72,7 @@ const App = () => {
             <Button onClick={connectArcana}>Connect Arcana</Button>
           )}
         </Group>
+        <UploadFile arcanaAccount={arcanaAccount} />
       </Group>
     </>
   );

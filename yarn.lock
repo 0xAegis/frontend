@@ -2189,27 +2189,34 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@mantine/core@^3.6.14":
-  version "3.6.14"
-  resolved "https://registry.yarnpkg.com/@mantine/core/-/core-3.6.14.tgz#0b36b2f94d021e1466577f1dbf4b490f6249e4db"
-  integrity sha512-O8x2uvLND9omsqI3hdkb59tkOyY7U4iSj+ZtKb9iPxejRxg+xv2BTlc5hxr5wFyu6gGv5NOoAelrdI/4g/e+1A==
+"@mantine/core@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@mantine/core/-/core-4.0.0.tgz#39d7499bd9d0356132823f6075f56e1696743dec"
+  integrity sha512-aWwfv8d1Eqx0nqjoZZwbK17gWfQeukCRXfysusC15WHzq8R7Q5QkZzhxU6wBlzObIvLZvWy64uApcY8QxiXr5A==
   dependencies:
-    "@mantine/styles" "3.6.14"
+    "@mantine/styles" "4.0.0"
     "@popperjs/core" "^2.9.3"
     "@radix-ui/react-scroll-area" "^0.1.1"
     clsx "^1.1.1"
     react-popper "^2.2.5"
     react-textarea-autosize "^8.3.2"
 
-"@mantine/hooks@^3.6.14":
-  version "3.6.14"
-  resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-3.6.14.tgz#31f4d937384acbdae34ca0ca84056fc191eae85e"
-  integrity sha512-ob6FdjG7/plSpp2VOUvfEQb8a02hlLFo8Qp/EFU8OHn3lfp8PEKGxWQznPPQ9Zay53ZFm05ixrFq9z7+M5jEdQ==
+"@mantine/dropzone@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@mantine/dropzone/-/dropzone-4.0.0.tgz#701eb2ce63bf1e95a5df16fefac7815d402fc2c5"
+  integrity sha512-ZGginQMnJlEgxpkgSTwQLonB037SLYf4x/Ae6aI7dNgYoIf0hXNzkBxgKuy/SYkIqQzpqVuHOgVi8b19cmgiHQ==
+  dependencies:
+    react-dropzone "^11.4.2"
 
-"@mantine/styles@3.6.14":
-  version "3.6.14"
-  resolved "https://registry.yarnpkg.com/@mantine/styles/-/styles-3.6.14.tgz#c0325ddcf109d52140617b1d47ad7f444d258ae3"
-  integrity sha512-LtTrR1TMs7lGIL7jXrV8mFVLfIvZ0aRshSXXREyFe1X1T+qIOJlBFy/kconkSJdJmqpJ3T5yXivQebz9h8OT4Q==
+"@mantine/hooks@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-4.0.0.tgz#8fc00aae0ffb8a817c3dc63fa2d9879440618633"
+  integrity sha512-wYOv28mJdzLNK4Q112o18XglkNN0WkMioSh5lEE+V2nBrxhTu/vlfFkiC21HZXKBJ1lyy22nIvSUA2jz82W3lg==
+
+"@mantine/styles@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@mantine/styles/-/styles-4.0.0.tgz#ba2db06e96c1ea8e693c1b810cddc7a379e1c71b"
+  integrity sha512-wsOCu9heyc2NMLYZfWMa+3K4QmlyTGJB52hiHHbu84KPlvNoAXAeh6dpB37eM9MySLPJnWEEXfiA3x26rmgesQ==
   dependencies:
     "@emotion/cache" "^11.7.1"
     "@emotion/react" "^11.7.1"
@@ -3666,6 +3673,11 @@ atob@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
+
+attr-accept@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
+  integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
 
 autoprefixer@^9.6.1:
   version "9.8.8"
@@ -6780,6 +6792,13 @@ file-loader@6.1.1:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+file-selector@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.4.0.tgz#59ec4f27aa5baf0841e9c6385c8386bef4d18b17"
+  integrity sha512-iACCiXeMYOvZqlF1kTiYINzgepRBymz1wwjiuup9u9nayhb6g4fSwiyJ/6adli+EPwrWtpgQAh2PoS7HukEGEg==
+  dependencies:
+    tslib "^2.0.3"
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -11359,6 +11378,15 @@ react-dom@^17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
+
+react-dropzone@^11.4.2:
+  version "11.7.1"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-11.7.1.tgz#3851bb75b26af0bf1b17ce1449fd980e643b9356"
+  integrity sha512-zxCMwhfPy1olUEbw3FLNPLhAm/HnaYH5aELIEglRbqabizKAdHs0h+WuyOpmA+v1JXn0++fpQDdNfUagWt5hJQ==
+  dependencies:
+    attr-accept "^2.2.2"
+    file-selector "^0.4.0"
+    prop-types "^15.8.1"
 
 react-error-overlay@^6.0.9:
   version "6.0.10"
