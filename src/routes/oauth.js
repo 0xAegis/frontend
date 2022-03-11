@@ -1,5 +1,6 @@
-import { AuthProvider } from "@arcana/auth";
 import { useEffect } from "react";
+
+import { AuthProvider } from "@arcana/auth";
 
 export const GoogleOauthRedirect = () => {
   useEffect(() => {
