@@ -1,10 +1,12 @@
-import { Button, Group, Text } from "@mantine/core";
-import { ethers } from "ethers";
 import { useState, useEffect } from "react";
+
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { getArcanaAuth } from "./utils/arcana";
+import { Button, Group, Text } from "@mantine/core";
+import { ethers } from "ethers";
 import { SocialLoginType } from "@arcana/auth";
+
+import { getArcanaAuth } from "./utils/arcana";
 
 const App = () => {
   const [polygonAccount, setPolygonAccount] = useState(null);
