@@ -7,31 +7,35 @@ import { ethers } from "ethers";
 import { SocialLoginType } from "@arcana/auth";
 
 import { getArcanaAuth } from "./utils/arcana";
+import { UploadFile } from "./components/UploadFile";
 
 const App = () => {
+  // The currently connected accounts
   const [polygonAccount, setPolygonAccount] = useState(null);
   const [arcanaAccount, setArcanaAccount] = useState(null);
-  const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
 
   // Check if user is logged in to Arcana
   useEffect(() => {
+    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      console.log(userInfo);
       setArcanaAccount(userInfo);
     }
-  }, [arcanaAuth]);
+  }, []);
 
   // Connect to Arcana using social auth
   const connectArcana = async () => {
+    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      console.log(userInfo);
       setArcanaAccount(userInfo);
     }
   };
 
+  // Callback which gets called when user clicks on connect wallet button
   const connectWallet = async () => {
     const providerOptions = {
       walletconnect: {
@@ -55,7 +59,7 @@ const App = () => {
 
   return (
     <>
-      <Group>
+      <Group direction="column">
         <Group>
           {polygonAccount ? (
             <Text>Connected to Polygon: {polygonAccount}</Text>
@@ -70,6 +74,7 @@ const App = () => {
             <Button onClick={connectArcana}>Connect Arcana</Button>
           )}
         </Group>
+        <UploadFile arcanaAccount={arcanaAccount} />
       </Group>
     </>
   );
