@@ -10,6 +10,7 @@ import { getArcanaAuth } from "./utils/arcana";
 import { UploadFile } from "./components/UploadFile";
 
 const App = () => {
+  // The currently connected accounts
   const [polygonAccount, setPolygonAccount] = useState(null);
   const [arcanaAccount, setArcanaAccount] = useState(null);
 
@@ -34,6 +35,7 @@ const App = () => {
     }
   };
 
+  // Callback which gets called when user clicks on connect wallet button
   const connectWallet = async () => {
     const providerOptions = {
       walletconnect: {
