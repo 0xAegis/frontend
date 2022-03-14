@@ -18,6 +18,7 @@ export const CreatePost = ({ arcanaAccount }) => {
 
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
+    console.log(formValues);
     // Upload the files to Arcana
     const arcanaStorage = getArcanaStorage({
       privateKey: arcanaAccount.privateKey,
@@ -32,7 +33,7 @@ export const CreatePost = ({ arcanaAccount }) => {
           })
       )
     );
-    console.log(fileDids);
+    console.log("Attachments DIDs:", fileDids);
   };
 
   // Callback which gets called after the user has selected or drag-and-dropped a file
