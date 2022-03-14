@@ -87,11 +87,13 @@ const ConnectWallet = () => {
         )}
       </Group>
       <Group>
-        {chainIsValid ? null : (
-          <Button onClick={changeChain}>
-            Invalid chain, click here to connect to Polygon.
-          </Button>
-        )}
+        {polygonAccount ? (
+          chainIsValid ? null : (
+            <Button onClick={changeChain}>
+              Invalid chain, click here to connect to Polygon.
+            </Button>
+          )
+        ) : null}
       </Group>
     </Group>
   );
