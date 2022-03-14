@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Group, Text } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 
-import { getArcanaStorage, uploadToArcana } from "../utils/arcana";
+import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
 
 // Essentially a wrapper over a Mantine Dropzone component which handles file upload to Arcana
 export const UploadFile = ({ arcanaAccount }) => {
