@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import { SocialLoginType } from "@arcana/auth";
 
 import { getArcanaAuth } from "./utils/arcana";
-import { UploadFile } from "./components/UploadFile";
+import { CreatePost } from "./components/CreatePost";
 
 const App = () => {
   // The currently connected accounts
@@ -74,7 +74,7 @@ const App = () => {
             <Button onClick={connectArcana}>Connect Arcana</Button>
           )}
         </Group>
-        <UploadFile arcanaAccount={arcanaAccount} />
+        <CreatePost arcanaAccount={arcanaAccount} />
       </Group>
     </>
   );
