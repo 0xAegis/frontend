@@ -16,11 +16,16 @@ const ConnectWallet = () => {
         console.log("Metamask is not installed.");
         return;
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        "any"
+      );
       const accounts = await provider.listAccounts();
       if (accounts.length) {
         setPolygonAccount(accounts[0]);
       }
+      let a = await provider.getNetwork();
+      console.log(a.chainId);
       setChainIsValid((await provider.getNetwork()).chainId === 137);
     };
 
@@ -33,7 +38,7 @@ const ConnectWallet = () => {
       console.log("Metamask is not installed.");
       return;
     }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const accounts = await provider.send("eth_requestAccounts");
     if (accounts.length) {
       setPolygonAccount(accounts[0]);
@@ -46,7 +51,7 @@ const ConnectWallet = () => {
       console.log("Metamask is not installed.");
       return;
     }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     await provider.send("wallet_addEthereumChain", [
       {
         chainId: "0x89",
@@ -60,6 +65,8 @@ const ConnectWallet = () => {
         blockExplorerUrls: ["https://polygonscan.com/"],
       },
     ]);
+    let a = await provider.getNetwork();
+    console.log(a.chainId);
     setChainIsValid((await provider.getNetwork()).chainId === 137);
   };
 
