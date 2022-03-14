@@ -1,89 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Button, Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
 
 const ConnectWallet = () => {
-  // The currently connected Polygon account
+  // The currently connected accounts
   const [polygonAccount, setPolygonAccount] = useState(null);
-  // Whether Metamask is on the right chain
-  const [chainIsValid, setChainIsValid] = useState(false);
 
-  // On page load, check whether Metamask is connected and to the right chain
-  useEffect(() => {
-    const checkPolygonAccounts = async () => {
-      if (!window.ethereum) {
-        console.log("Metamask is not installed.");
-        return;
-      }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await provider.listAccounts();
-      if (accounts.length) {
-        setPolygonAccount(accounts[0]);
-      }
-      setChainIsValid((await provider.getNetwork()).chainId === 137);
-    };
-
-    checkPolygonAccounts();
-  }, []);
-
-  // Connect Metamask wallet
+  // Callback which gets called when user clicks on connect wallet button
   const connectWallet = async () => {
-    if (!window.ethereum) {
-      console.log("Metamask is not installed.");
-      return;
-    }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: process.env.REACT_APP_INFURA_ID,
+        },
+      },
+    };
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      providerOptions,
+    });
+    const instance = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(instance);
     const accounts = await provider.send("eth_requestAccounts");
     if (accounts.length) {
       setPolygonAccount(accounts[0]);
     }
   };
 
-  // Change chain on Metamask to Polygon mainnet
-  const changeChain = async () => {
-    if (!window.ethereum) {
-      console.log("Metamask is not installed.");
-      return;
-    }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("wallet_addEthereumChain", [
-      {
-        chainId: "0x89",
-        rpcUrls: ["https://rpc-mainnet.matic.network/"],
-        chainName: "Polygon Mainnet",
-        nativeCurrency: {
-          name: "MATIC Token",
-          symbol: "MATIC",
-          decimals: 18,
-        },
-        blockExplorerUrls: ["https://polygonscan.com/"],
-      },
-    ]);
-    setChainIsValid((await provider.getNetwork()).chainId === 137);
-  };
-
   return (
     <Group direction="column">
       <Group>
         {polygonAccount ? (
-          <Text>Connected Wallet: {polygonAccount}</Text>
+          <Text>Connected to Polygon: {polygonAccount}</Text>
         ) : (
-          <Button
-            onClick={async () => {
-              await changeChain();
-              await connectWallet();
-            }}
-          >
-            Connect Wallet
-          </Button>
-        )}
-      </Group>
-      <Group>
-        {chainIsValid ? null : (
-          <Button onClick={changeChain}>
-            Invalid chain, click here to connect to Polygon.
-          </Button>
+          <Button onClick={connectWallet}>Connect Wallet</Button>
         )}
       </Group>
     </Group>
