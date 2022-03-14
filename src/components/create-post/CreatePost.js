@@ -2,7 +2,7 @@ import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
 
-import { getArcanaStorage, uploadToArcana } from "../utils/arcana";
+import { getArcanaStorage, uploadToArcana } from "../../utils/arcana";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = ({ arcanaAccount }) => {
