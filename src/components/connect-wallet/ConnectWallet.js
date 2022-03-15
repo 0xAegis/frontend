@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Button, Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
 
@@ -11,17 +10,8 @@ const ConnectWallet = () => {
 
   // Callback which gets called when user clicks on connect wallet button
   const connectWallet = async () => {
-    const providerOptions = {
-      walletconnect: {
-        package: WalletConnectProvider,
-        options: {
-          infuraId: process.env.REACT_APP_INFURA_ID,
-        },
-      },
-    };
     const web3Modal = new Web3Modal({
-      network: "mainnet",
-      providerOptions,
+      network: "polygon",
     });
     const instance = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(instance);
