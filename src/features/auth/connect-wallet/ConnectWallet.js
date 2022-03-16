@@ -5,18 +5,18 @@ import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
-  changeAccount,
-  changeNetwork,
-  selectAccount,
-  selectChainIsValid,
-} from "./connectWalletSlice";
+  selectPolygonAccount,
+  selectPolygonChainIsValid,
+  updatePolygonAccounts,
+  updatePolygonNetwork,
+} from "../authSlice";
 
 const ConnectWallet = () => {
   // Redux dispatcher
   const dispatch = useDispatch();
   // fetch account and chainIsValid from the Redux store
-  const account = useSelector(selectAccount);
-  const chainIsValid = useSelector(selectChainIsValid);
+  const account = useSelector(selectPolygonAccount);
+  const chainIsValid = useSelector(selectPolygonChainIsValid);
 
   // On page load, check whether Metamask is connected and to the right chain
   useEffect(() => {
@@ -32,8 +32,8 @@ const ConnectWallet = () => {
       const accounts = await provider.listAccounts();
       const network = await provider.getNetwork();
       // Dispatch changes to Redux
-      dispatch(changeAccount({ accounts }));
-      dispatch(changeNetwork({ network }));
+      dispatch(updatePolygonAccounts({ accounts }));
+      dispatch(updatePolygonNetwork({ network }));
     };
 
     checkPolygonAccounts();
@@ -48,7 +48,7 @@ const ConnectWallet = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const accounts = await provider.send("eth_requestAccounts");
     // Dispatch changes to Redux
-    dispatch(changeAccount({ accounts }));
+    dispatch(updatePolygonAccounts({ accounts }));
   };
 
   // Change chain on Metamask to Polygon mainnet
@@ -74,7 +74,7 @@ const ConnectWallet = () => {
     ]);
     const network = await provider.getNetwork();
     // Dispatch changes to Redux
-    dispatch(changeNetwork({ network }));
+    dispatch(updatePolygonNetwork({ network }));
   };
 
   return (
