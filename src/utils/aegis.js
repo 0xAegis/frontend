@@ -40,3 +40,23 @@ export const getUser = async ({ provider, account }) => {
   }
   return formatUserInfo(userInfo);
 };
+
+const formatPost = (post) => {
+  return {
+    text: post.text,
+    attachments: post.attachments,
+    isPaid: post.isPaid,
+  };
+};
+
+export const getPostsOfUser = async ({ provider, account }) => {
+  const aegis = getAegis({ provider, account });
+  const postCount = (await aegis.getPostCount(account)).toNumber();
+  const posts = await Promise.all(
+    Array(postCount).map(
+      async (value, index) => await aegis.getPost(account, index)
+    )
+  );
+  const formattedPosts = posts.map((value) => formatPost(value));
+  return formattedPosts;
+};
