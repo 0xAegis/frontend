@@ -1,13 +1,22 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import { Button, Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  changeAccount,
+  changeNetwork,
+  selectAccount,
+  selectChainIsValid,
+} from "./connectWalletSlice";
 
 const ConnectWallet = () => {
-  // The currently connected Polygon account
-  const [polygonAccount, setPolygonAccount] = useState(null);
-  // Whether Metamask is on the right chain
-  const [chainIsValid, setChainIsValid] = useState(false);
+  // Redux dispatcher
+  const dispatch = useDispatch();
+  // fetch account and chainIsValid from the Redux store
+  const account = useSelector(selectAccount);
+  const chainIsValid = useSelector(selectChainIsValid);
 
   // On page load, check whether Metamask is connected and to the right chain
   useEffect(() => {
@@ -21,16 +30,14 @@ const ConnectWallet = () => {
         "any"
       );
       const accounts = await provider.listAccounts();
-      if (accounts.length) {
-        setPolygonAccount(accounts[0]);
-      }
-      let a = await provider.getNetwork();
-      console.log(a.chainId);
-      setChainIsValid((await provider.getNetwork()).chainId === 137);
+      const network = await provider.getNetwork();
+      // Dispatch changes to Redux
+      dispatch(changeAccount({ accounts }));
+      dispatch(changeNetwork({ network }));
     };
 
     checkPolygonAccounts();
-  }, []);
+  }, [dispatch]);
 
   // Connect Metamask wallet
   const connectWallet = async () => {
@@ -40,9 +47,8 @@ const ConnectWallet = () => {
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const accounts = await provider.send("eth_requestAccounts");
-    if (accounts.length) {
-      setPolygonAccount(accounts[0]);
-    }
+    // Dispatch changes to Redux
+    dispatch(changeAccount({ accounts }));
   };
 
   // Change chain on Metamask to Polygon mainnet
@@ -65,16 +71,16 @@ const ConnectWallet = () => {
         blockExplorerUrls: ["https://polygonscan.com/"],
       },
     ]);
-    let a = await provider.getNetwork();
-    console.log(a.chainId);
-    setChainIsValid((await provider.getNetwork()).chainId === 137);
+    const network = await provider.getNetwork();
+    // Dispatch changes to Redux
+    dispatch(changeNetwork({ network }));
   };
 
   return (
     <Group direction="column">
       <Group>
-        {polygonAccount ? (
-          <Text>Connected Wallet: {polygonAccount}</Text>
+        {account ? (
+          <Text>Connected Wallet: {account}</Text>
         ) : (
           <Button
             onClick={async () => {
@@ -87,7 +93,7 @@ const ConnectWallet = () => {
         )}
       </Group>
       <Group>
-        {polygonAccount ? (
+        {account ? (
           chainIsValid ? null : (
             <Button onClick={changeChain}>
               Invalid chain, click here to connect to Polygon.
