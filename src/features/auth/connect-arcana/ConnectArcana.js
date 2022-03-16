@@ -4,14 +4,14 @@ import { Button, Group, Text } from "@mantine/core";
 import { SocialLoginType } from "@arcana/auth";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getArcanaAuth } from "../../utils/arcana";
-import { changeAccount, selectAccount } from "./connectArcanaSlice";
+import { getArcanaAuth } from "../../../utils/arcana";
+import { loginToArcana, selectArcanaUserInfo } from "../authSlice";
 
 const ConnectArcana = () => {
   // Redux dispatcher
   const dispatch = useDispatch();
   // fetch account from the Redux store
-  const account = useSelector(selectAccount);
+  const account = useSelector(selectArcanaUserInfo);
 
   // Check if user is logged in to Arcana
   useEffect(() => {
@@ -19,7 +19,7 @@ const ConnectArcana = () => {
 
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      dispatch(changeAccount({ userInfo }));
+      dispatch(loginToArcana({ userInfo }));
     }
   }, [dispatch]);
 
@@ -30,7 +30,7 @@ const ConnectArcana = () => {
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      dispatch(changeAccount({ userInfo }));
+      dispatch(loginToArcana({ userInfo }));
     }
   };
 
