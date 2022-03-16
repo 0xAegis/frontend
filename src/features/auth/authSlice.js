@@ -10,6 +10,9 @@ const initialState = {
     chainId: null,
     chainIsValid: false,
   },
+  aegis: {
+    userInfo: null,
+  },
 };
 
 // Create a Redux Toolkit Slice which stores the state related to the ConnectArcana component
@@ -32,12 +35,20 @@ export const authSlice = createSlice({
         parseInt(process.env.REACT_APP_CHAIN_ID) ===
         action.payload.network.chainId;
     },
+    // Login to Aegis account, payload is {userInfo}, where userInfo is the user info object
+    loginToAegis: (state, action) => {
+      state.aegis.userInfo = action.payload.userInfo;
+    },
   },
 });
 
 // Actions
-export const { updatePolygonAccounts, updatePolygonNetwork, loginToArcana } =
-  authSlice.actions;
+export const {
+  updatePolygonAccounts,
+  updatePolygonNetwork,
+  loginToArcana,
+  loginToAegis,
+} = authSlice.actions;
 
 // Selectors
 export const selectPolygonAccount = (state) =>
@@ -45,5 +56,6 @@ export const selectPolygonAccount = (state) =>
 export const selectPolygonChainIsValid = (state) =>
   state.auth.polygon.chainIsValid;
 export const selectArcanaUserInfo = (state) => state.auth.arcana.userInfo;
+export const selectAegisUserInfo = (state) => state.auth.aegis.userInfo;
 
 export default authSlice.reducer;
