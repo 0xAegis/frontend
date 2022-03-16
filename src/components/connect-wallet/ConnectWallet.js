@@ -60,15 +60,16 @@ const ConnectWallet = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     await provider.send("wallet_addEthereumChain", [
       {
-        chainId: "0x89",
-        rpcUrls: ["https://rpc-mainnet.matic.network/"],
-        chainName: "Polygon Mainnet",
+        // Convert chain id to hexadecimal format
+        chainId: "0x" + parseInt(process.env.REACT_APP_CHAIN_ID).toString(16),
+        rpcUrls: [process.env.REACT_APP_RPC_URL],
+        chainName: process.env.REACT_APP_NETWORK_LONG_NAME,
         nativeCurrency: {
           name: "MATIC Token",
           symbol: "MATIC",
           decimals: 18,
         },
-        blockExplorerUrls: ["https://polygonscan.com/"],
+        blockExplorerUrls: [process.env.REACT_APP_BLOCK_EXPLORER_URL],
       },
     ]);
     const network = await provider.getNetwork();

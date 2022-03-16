@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const VALID_CHAIN_IDS = [137];
-
 // Initial state of this Slice
 const initialState = {
   account: null,
@@ -25,9 +23,9 @@ export const connectWalletSlice = createSlice({
     // Change network, payload is {network}, where network is the network info object
     changeNetwork: (state, action) => {
       state.chainId = action.payload.network.chainId;
-      state.chainIsValid = VALID_CHAIN_IDS.includes(
-        action.payload.network.chainId
-      );
+      state.chainIsValid =
+        parseInt(process.env.REACT_APP_CHAIN_ID) ===
+        action.payload.network.chainId;
     },
   },
 });
