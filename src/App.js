@@ -2,7 +2,7 @@ import { Group } from "@mantine/core";
 
 import Navigation from "./components/navigation/Navigation";
 import ConnectWallet from "./components/connect-wallet/ConnectWallet";
-import ConnectArcana from "./components/arcana/connect-arcana/ConnectArcana";
+import ConnectArcana from "./components/connect-arcana/ConnectArcana";
 
 const App = () => {
   return (
