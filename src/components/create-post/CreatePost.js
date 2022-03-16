@@ -1,11 +1,20 @@
 import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
+import { useDispatch, useSelector } from "react-redux";
 
 import { getArcanaStorage, uploadToArcana } from "../../utils/arcana";
+import { selectAccount as selectArcanaAccount } from "../connect-arcana/connectArcanaSlice";
+import { selectAccount as selectPolygonAccount } from "../connect-wallet/connectWalletSlice";
 
 // Wrapper over a form for creating posts on Aegis
-export const CreatePost = ({ arcanaAccount }) => {
+export const CreatePost = () => {
+  // Redux dispatcher
+  const dispatch = useDispatch();
+  // fetch account from the Redux store
+  const arcanaAccount = useSelector(selectArcanaAccount);
+  const polygonAccount = useSelector(selectPolygonAccount);
+
   // Use the useForm hook to create a form object
   const form = useForm({
     // The fields in the form

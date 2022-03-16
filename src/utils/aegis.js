@@ -23,3 +23,16 @@ export const createUser = async ({ provider, account, username }) => {
   await createUserTx.wait();
   return await aegis.users(account);
 };
+
+export const createPost = async ({
+  provider,
+  account,
+  text,
+  attachments,
+  isPaid,
+}) => {
+  const aegis = getAegis({ provider, account });
+  const createPostTx = await aegis.createPost(text, attachments, isPaid);
+  await createPostTx.wait();
+  return await aegis.users(account);
+};
