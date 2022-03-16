@@ -8,6 +8,7 @@
     "@mantine/core": "^4.0.0",
     "@mantine/dropzone": "^4.0.0",
     "@mantine/hooks": "^4.0.0",
+    "@superfluid-finance/sdk-core": "^0.3.0",
     "@reduxjs/toolkit": "^1.8.0",
     "ethers": "^5.5.4",
     "react": "^17.0.2",
