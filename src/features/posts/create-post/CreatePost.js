@@ -1,18 +1,20 @@
 import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
-import { useDispatch, useSelector } from "react-redux";
+import { ethers } from "ethers";
+import { useSelector } from "react-redux";
 
-import { getArcanaStorage, uploadToArcana } from "../../utils/arcana";
-import { selectAccount as selectArcanaAccount } from "../connect-arcana/connectArcanaSlice";
-import { selectAccount as selectPolygonAccount } from "../connect-wallet/connectWalletSlice";
+import { createPost } from "../../../utils/aegis";
+import {
+  selectArcanaUserInfo,
+  selectPolygonAccount,
+} from "../../auth/authSlice";
+import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = () => {
-  // Redux dispatcher
-  const dispatch = useDispatch();
-  // fetch account from the Redux store
-  const arcanaAccount = useSelector(selectArcanaAccount);
+  // fetch accounts from the Redux store
+  const arcanaUserInfo = useSelector(selectArcanaUserInfo);
   const polygonAccount = useSelector(selectPolygonAccount);
 
   // Use the useForm hook to create a form object
@@ -21,17 +23,18 @@ export const CreatePost = () => {
     initialValues: {
       text: "",
       attachments: [],
-      ifPaid: false,
+      isPaid: false,
     },
   });
 
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
     console.log(formValues);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     // Upload the files to Arcana
     const arcanaStorage = getArcanaStorage({
-      privateKey: arcanaAccount.privateKey,
-      email: arcanaAccount.userInfo.email,
+      privateKey: arcanaUserInfo.privateKey,
+      email: arcanaUserInfo.userInfo.email,
     });
     const fileDids = await Promise.all(
       formValues.attachments.map(
@@ -43,6 +46,14 @@ export const CreatePost = () => {
       )
     );
     console.log("Attachments DIDs:", fileDids);
+    const post = await createPost({
+      provider,
+      account: polygonAccount,
+      text: formValues.text,
+      attachments: fileDids,
+      isPaid: formValues.isPaid,
+    });
+    console.log(post);
   };
 
   // Callback which gets called after the user has selected or drag-and-dropped a file
@@ -59,7 +70,7 @@ export const CreatePost = () => {
         </Dropzone>
         <Checkbox
           label="Is this a paid post?"
-          {...form.getInputProps("ifPaid")}
+          {...form.getInputProps("isPaid")}
         />
         <Button position="right" type="submit">
           Post

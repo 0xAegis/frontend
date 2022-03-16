@@ -1,9 +1,9 @@
 import { Group } from "@mantine/core";
 
-import { CreateUser } from "./components/create-user/CreateUser";
 import ConnectArcana from "./features/auth/connect-arcana/ConnectArcana";
 import ConnectWallet from "./features/auth/connect-wallet/ConnectWallet";
 import Navigation from "./features/navigation/Navigation";
+import { CreatePost } from "./features/posts/create-post/CreatePost";
 
 const App = () => {
   return (
@@ -16,7 +16,7 @@ const App = () => {
           <ConnectArcana />
         </Group>
         <Group>
-          <CreateUser />
+          <CreatePost />
         </Group>
       </Group>
     </Navigation>
