@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import { Button, Group, Text } from "@mantine/core";
 import { SocialLoginType } from "@arcana/auth";
+import { useDispatch, useSelector } from "react-redux";
 
-import { getArcanaAuth } from "../../../utils/arcana";
+import { getArcanaAuth } from "../../utils/arcana";
+import { changeAccount, selectAccount } from "./connectArcanaSlice";
 
 const ConnectArcana = () => {
-  // The currently connected accounts
-  const [arcanaAccount, setArcanaAccount] = useState(null);
+  // Redux dispatcher
+  const dispatch = useDispatch();
+  // fetch account from the Redux store
+  const account = useSelector(selectAccount);
 
   // Check if user is logged in to Arcana
   useEffect(() => {
@@ -15,9 +19,9 @@ const ConnectArcana = () => {
 
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      setArcanaAccount(userInfo);
+      dispatch(changeAccount({ userInfo }));
     }
-  }, []);
+  }, [dispatch]);
 
   // Connect to Arcana using social auth
   const connectArcana = async () => {
@@ -26,15 +30,15 @@ const ConnectArcana = () => {
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      setArcanaAccount(userInfo);
+      dispatch(changeAccount({ userInfo }));
     }
   };
 
   return (
     <Group direction="column">
       <Group>
-        {arcanaAccount ? (
-          <Text>Connected to Arcana: {arcanaAccount.userInfo.email}</Text>
+        {account ? (
+          <Text>Connected to Arcana: {account.userInfo.email}</Text>
         ) : (
           <Button onClick={connectArcana}>Connect Arcana</Button>
         )}
