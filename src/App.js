@@ -1,9 +1,9 @@
 import { Group } from "@mantine/core";
 
-import Navigation from "./components/navigation/Navigation";
-import ConnectWallet from "./components/connect-wallet/ConnectWallet";
-import ConnectArcana from "./components/connect-arcana/ConnectArcana";
 import { CreateUser } from "./components/create-user/CreateUser";
+import ConnectArcana from "./features/auth/connect-arcana/ConnectArcana";
+import ConnectWallet from "./features/auth/connect-wallet/ConnectWallet";
+import Navigation from "./features/navigation/Navigation";
 
 const App = () => {
   return (
