@@ -7,25 +7,25 @@ import { Provider } from "react-redux";
 import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
 import { store } from "./store.js";
+import { UserProfile } from "./features/user-profile/UserProfile";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Provider store={store}>
-              <App />
-            </Provider>
-          }
-        />
-        <Route
-          path="/oauth-redirect/google"
-          element={<GoogleOauthRedirect />}
-        />
-      </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route path="user">
+              <Route path=":username" element={<UserProfile />} />
+            </Route>
+          </Route>
+          <Route
+            path="/oauth-redirect/google"
+            element={<GoogleOauthRedirect />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

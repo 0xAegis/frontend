@@ -1,4 +1,5 @@
 import { Group } from "@mantine/core";
+import { Outlet } from "react-router-dom";
 
 import ConnectArcana from "./features/auth/connect-arcana/ConnectArcana";
 import ConnectWallet from "./features/auth/connect-wallet/ConnectWallet";
@@ -19,6 +20,7 @@ const App = () => {
           <CreateUser />
         </Group>
       </Group>
+      <Outlet />
     </Navigation>
   );
 };
