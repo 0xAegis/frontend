@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -81,7 +81,20 @@ const ConnectWallet = () => {
     <Group direction="column">
       <Group>
         {account ? (
-          <Text>Connected Wallet: {account}</Text>
+          chainIsValid ? (
+            <Button
+              color="lime"
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
+              Connected: {`${account.slice(0, 3)}...${account.slice(-3)}`}
+            </Button>
+          ) : (
+            <Button color="yellow" onClick={changeChain}>
+              Connect to Polygon!
+            </Button>
+          )
         ) : (
           <Button
             onClick={async () => {
@@ -92,15 +105,6 @@ const ConnectWallet = () => {
             Connect Wallet
           </Button>
         )}
-      </Group>
-      <Group>
-        {account ? (
-          chainIsValid ? null : (
-            <Button onClick={changeChain}>
-              Invalid chain, click here to connect to Polygon.
-            </Button>
-          )
-        ) : null}
       </Group>
     </Group>
   );
