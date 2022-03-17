@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Container } from "@mantine/core";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -11,7 +11,7 @@ import {
   updatePolygonNetwork,
 } from "../authSlice";
 
-const ConnectWallet = () => {
+const ConnectWallet = ({ pb }) => {
   // Redux dispatcher
   const dispatch = useDispatch();
   // fetch account and chainIsValid from the Redux store
@@ -78,31 +78,35 @@ const ConnectWallet = () => {
   };
 
   return (
-    <Group direction="column">
-      <Group>
-        {account ? (
-          <Text>Connected Wallet: {account}</Text>
-        ) : (
+    <Container pb={pb} fluid>
+      {account ? (
+        chainIsValid ? (
           <Button
-            onClick={async () => {
-              await changeChain();
-              await connectWallet();
+            fullWidth
+            color="lime"
+            onClick={(e) => {
+              e.preventDefault();
             }}
           >
-            Connect Wallet
+            Connected: {`${account.slice(0, 3)}...${account.slice(-3)}`}
           </Button>
-        )}
-      </Group>
-      <Group>
-        {account ? (
-          chainIsValid ? null : (
-            <Button onClick={changeChain}>
-              Invalid chain, click here to connect to Polygon.
-            </Button>
-          )
-        ) : null}
-      </Group>
-    </Group>
+        ) : (
+          <Button fullWidth color="yellow" onClick={changeChain}>
+            Connect to Polygon!
+          </Button>
+        )
+      ) : (
+        <Button
+          fullWidth
+          onClick={async () => {
+            await changeChain();
+            await connectWallet();
+          }}
+        >
+          Connect Wallet
+        </Button>
+      )}
+    </Container>
   );
 };
 

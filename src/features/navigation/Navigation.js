@@ -10,6 +10,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 
+import ConnectWallet from "../auth/connect-wallet/ConnectWallet";
+import ConnectArcana from "../auth/connect-arcana/ConnectArcana";
+
 const Navigation = ({ children }) => {
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
@@ -25,7 +28,14 @@ const Navigation = ({ children }) => {
           hidden={!opened}
           width={{ sm: 250, lg: 300 }}
         >
-          <Text>Home</Text>
+          <Navbar.Section>
+            <Text>Home</Text>
+          </Navbar.Section>
+          <Navbar.Section grow mt="md"></Navbar.Section>
+          <Navbar.Section mb="xl">
+            <ConnectWallet pb={20} />
+            <ConnectArcana />
+          </Navbar.Section>
         </Navbar>
       }
       header={
