@@ -25,6 +25,9 @@ export const CreateUser = () => {
   // On page load, check whether user has an account in Aegis
   useEffect(() => {
     const checkAegisAccount = async () => {
+      if (!polygonAccount) {
+        return;
+      }
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
         return;
