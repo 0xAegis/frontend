@@ -8,8 +8,8 @@
     "@mantine/core": "^4.0.0",
     "@mantine/dropzone": "^4.0.0",
     "@mantine/hooks": "^4.0.0",
-    "@superfluid-finance/sdk-core": "^0.3.0",
     "@reduxjs/toolkit": "^1.8.0",
+    "@superfluid-finance/sdk-core": "^0.3.0",
     "ethers": "^5.5.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -17,6 +17,10 @@
     "react-router-dom": "6",
     "react-scripts": "^4.0.3"
   },
+  "resolutions": {
+    "//": "See https://github.com/facebook/create-react-app/issues/11773",
+    "react-error-overlay": "6.0.9"
+  },  
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
