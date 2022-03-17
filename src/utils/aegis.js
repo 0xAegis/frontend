@@ -25,19 +25,20 @@ const formatUserInfo = (userInfo) => {
   };
 };
 
+const formatPost = ({ post, creator }) => {
+  return {
+    text: post.text,
+    attachments: post.attachments,
+    isPaid: post.isPaid,
+    creator,
+  };
+};
+
 export const createUser = async ({ provider, account, username }) => {
   const aegis = getAegis({ provider, account });
   const createUserTx = await aegis.createUser(username);
   await createUserTx.wait();
   return formatUserInfo(await aegis.users(account));
-};
-
-const formatPostInfo = (post) => {
-  return {
-    text: post.text,
-    attachments: post.attachments,
-    isPaid: post.isPaid,
-  };
 };
 
 export const createPost = async ({
@@ -53,7 +54,8 @@ export const createPost = async ({
   const postCreatedEvent = txReceipt.events?.filter((x) => {
     return x.event === "PostCreated";
   })[0];
-  return formatPostInfo(postCreatedEvent.args);
+  console.log(postCreatedEvent);
+  return formatPost({ post: postCreatedEvent.args, creator: account });
 };
 
 export const getUser = async ({ provider, account }) => {
@@ -65,22 +67,16 @@ export const getUser = async ({ provider, account }) => {
   return formatUserInfo(userInfo);
 };
 
-const formatPost = (post) => {
-  return {
-    text: post.text,
-    attachments: post.attachments,
-    isPaid: post.isPaid,
-  };
-};
-
 export const getPostsOfUser = async ({ provider, account }) => {
   const aegis = getAegis({ provider, account });
   const postCount = (await aegis.getPostCount(account)).toNumber();
   const posts = await Promise.all(
-    Array(postCount).map(
-      async (value, index) => await aegis.getPost(account, index)
+    [...Array(postCount).keys()].map(
+      async (index) => await aegis.getPost(account, index)
     )
   );
-  const formattedPosts = posts.map((value) => formatPost(value));
+  const formattedPosts = posts.map((post) =>
+    formatPost({ post, creator: account })
+  );
   return formattedPosts;
 };

@@ -4,8 +4,8 @@ import { Post } from "../post/Post";
 export const PostList = ({ posts }) => {
   return (
     <Group>
-      {posts.map((value) => (
-        <Post {...value} />
+      {posts.map((post) => (
+        <Post {...post} />
       ))}
     </Group>
   );
