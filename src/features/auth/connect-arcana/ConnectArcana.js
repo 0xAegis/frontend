@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Container, Text } from "@mantine/core";
 import { SocialLoginType } from "@arcana/auth";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -35,15 +35,15 @@ const ConnectArcana = () => {
   };
 
   return (
-    <Group direction="column">
-      <Group>
-        {account ? (
-          <Text>Connected to Arcana: {account.userInfo.email}</Text>
-        ) : (
-          <Button onClick={connectArcana}>Connect Arcana</Button>
-        )}
-      </Group>
-    </Group>
+    <Container fluid>
+      {account ? (
+        <Text>Connected to Arcana: {account.userInfo.email}</Text>
+      ) : (
+        <Button fullWidth onClick={connectArcana}>
+          Connect Arcana
+        </Button>
+      )}
+    </Container>
   );
 };
 

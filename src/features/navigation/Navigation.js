@@ -33,7 +33,7 @@ const Navigation = ({ children }) => {
           </Navbar.Section>
           <Navbar.Section grow mt="md"></Navbar.Section>
           <Navbar.Section mb="xl">
-            <ConnectWallet />
+            <ConnectWallet pb={20} />
             <ConnectArcana />
           </Navbar.Section>
         </Navbar>
