@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 
