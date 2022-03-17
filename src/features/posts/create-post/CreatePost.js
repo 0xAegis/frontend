@@ -2,17 +2,19 @@ import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { createPost } from "../../../utils/aegis";
 import {
   selectArcanaUserInfo,
   selectPolygonAccount,
 } from "../../auth/authSlice";
+import { addPost } from "../../users/usersSlice";
 import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
+import { createPost } from "../../../utils/aegis";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = () => {
+  const dispatch = useDispatch();
   // fetch accounts from the Redux store
   const arcanaUserInfo = useSelector(selectArcanaUserInfo);
   const polygonAccount = useSelector(selectPolygonAccount);
@@ -54,6 +56,8 @@ export const CreatePost = () => {
       isPaid: formValues.isPaid,
     });
     console.log(post);
+    // store the newly created post in Redux store
+    dispatch(addPost({ post }));
   };
 
   // Callback which gets called after the user has selected or drag-and-dropped a file

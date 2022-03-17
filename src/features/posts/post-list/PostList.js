@@ -3,9 +3,9 @@ import { Post } from "../post/Post";
 
 export const PostList = ({ posts }) => {
   return (
-    <Group>
+    <Group direction="column">
       {posts.map((post) => (
-        <Post {...post} />
+        <Post {...post} key={post.user + "::" + post.postIndex.toString()} />
       ))}
     </Group>
   );

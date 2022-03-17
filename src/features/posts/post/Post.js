@@ -1,3 +1,5 @@
+import { Text } from "@mantine/core";
+
 export const Post = ({ text, attachments, isPaid }) => {
-  return text;
+  return <Text>{text}</Text>;
 };

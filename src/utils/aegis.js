@@ -25,12 +25,15 @@ const formatUserInfo = (userInfo) => {
   };
 };
 
+//format a post fetched from ethers to a sane and predictable format
 const formatPost = ({ post, creator }) => {
   return {
+    user: post.user,
+    postIndex: post.postIndex.toNumber(),
     text: post.text,
     attachments: post.attachments,
     isPaid: post.isPaid,
-    creator,
+    timestamp: post.timestamp.toNumber(),
   };
 };
 
@@ -51,10 +54,9 @@ export const createPost = async ({
   const aegis = getAegis({ provider, account });
   const createPostTx = await aegis.createPost(text, attachments, isPaid);
   const txReceipt = await createPostTx.wait();
-  const postCreatedEvent = txReceipt.events?.filter((x) => {
+  const postCreatedEvent = txReceipt.events.filter((x) => {
     return x.event === "PostCreated";
   })[0];
-  console.log(postCreatedEvent);
   return formatPost({ post: postCreatedEvent.args, creator: account });
 };
 
@@ -69,14 +71,15 @@ export const getUser = async ({ provider, account }) => {
 
 export const getPostsOfUser = async ({ provider, account }) => {
   const aegis = getAegis({ provider, account });
-  const postCount = (await aegis.getPostCount(account)).toNumber();
-  const posts = await Promise.all(
-    [...Array(postCount).keys()].map(
-      async (index) => await aegis.getPost(account, index)
-    )
-  );
+  //create a filter for filtering events: account should be the user
+  const filter = aegis.filters.PostCreated(account);
+  //get all the events that match the above filter
+  const postCreatedEvents = await aegis.queryFilter(filter);
+  const posts = postCreatedEvents.map((event) => event.args);
+
   const formattedPosts = posts.map((post) =>
     formatPost({ post, creator: account })
   );
+  console.log(formattedPosts);
   return formattedPosts;
 };
