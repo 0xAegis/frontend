@@ -32,6 +32,30 @@ export const createUser = async ({ provider, account, username }) => {
   return formatUserInfo(await aegis.users(account));
 };
 
+const formatPostInfo = (post) => {
+  return {
+    text: post.text,
+    attachments: post.attachments,
+    isPaid: post.isPaid,
+  };
+};
+
+export const createPost = async ({
+  provider,
+  account,
+  text,
+  attachments,
+  isPaid,
+}) => {
+  const aegis = getAegis({ provider, account });
+  const createPostTx = await aegis.createPost(text, attachments, isPaid);
+  const txReceipt = await createPostTx.wait();
+  const postCreatedEvent = txReceipt.events?.filter((x) => {
+    return x.event === "PostCreated";
+  })[0];
+  return formatPostInfo(postCreatedEvent.args);
+};
+
 export const getUser = async ({ provider, account }) => {
   const aegis = getAegis({ provider, account });
   const userInfo = await aegis.users(account);
