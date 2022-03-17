@@ -18,7 +18,7 @@ export const CreateUser = () => {
   const form = useForm({
     // The fields in the form
     initialValues: {
-      username: "",
+      name: "",
     },
   });
 
@@ -51,18 +51,18 @@ export const CreateUser = () => {
     const userInfo = await createUser({
       provider,
       account: polygonAccount,
-      username: formValues.username,
+      name: formValues.name,
     });
     console.log(userInfo);
     dispatch(loginToAegis({ userInfo }));
   };
 
   return aegisUserInfo ? (
-    <Text>Logged in as: {aegisUserInfo.username}</Text>
+    <Text>Logged in as: {aegisUserInfo.name}</Text>
   ) : (
     <form onSubmit={form.onSubmit(handleFormSubmit)}>
       <Group direction="column" position="center" grow={true}>
-        <TextInput required {...form.getInputProps("username")} />
+        <TextInput required {...form.getInputProps("name")} />
         <Button position="right" type="submit">
           Create Account
         </Button>

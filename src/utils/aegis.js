@@ -19,15 +19,15 @@ export const getAegis = ({ provider, account }) => {
 
 const formatUserInfo = (userInfo) => {
   return {
-    username: userInfo.username,
+    name: userInfo.name,
     publicKey: userInfo.publicKey,
     nftAddress: userInfo.nftAddress,
   };
 };
 
-export const createUser = async ({ provider, account, username }) => {
+export const createUser = async ({ provider, account, name }) => {
   const aegis = getAegis({ provider, account });
-  const createUserTx = await aegis.createUser(username);
+  const createUserTx = await aegis.createUser(name);
   await createUserTx.wait();
   return formatUserInfo(await aegis.users(account));
 };
