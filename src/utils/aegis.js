@@ -19,7 +19,7 @@ export const getAegis = ({ provider, account }) => {
 
 const formatUserInfo = (userInfo) => {
   return {
-    username: userInfo.username,
+    name: userInfo.name,
     publicKey: userInfo.publicKey,
     nftAddress: userInfo.nftAddress,
   };

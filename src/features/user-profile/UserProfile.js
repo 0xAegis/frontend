@@ -13,12 +13,12 @@ export const UserProfile = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const userInfo = await getUser({ provider, account: params.username });
+      const userInfo = await getUser({ provider, account: params.userPubKey });
       setUserInfo(userInfo);
     };
 
     fetchUserInfo();
-  }, [params.username]);
+  }, [params.userPubKey]);
 
-  return userInfo ? <Text>{userInfo.username}</Text> : <Text>not found</Text>;
+  return userInfo ? <Text>{userInfo.name}</Text> : <Text>not found</Text>;
 };

@@ -16,7 +16,7 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route path="user">
-              <Route path=":username" element={<UserProfile />} />
+              <Route path=":userPubKey" element={<UserProfile />} />
             </Route>
           </Route>
           <Route
