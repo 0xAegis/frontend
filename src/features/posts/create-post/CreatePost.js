@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
@@ -16,6 +17,12 @@ export const CreatePost = () => {
   // fetch accounts from the Redux store
   const arcanaUserInfo = useSelector(selectArcanaUserInfo);
   const polygonAccount = useSelector(selectPolygonAccount);
+
+  //Keeping track of character count while writing post
+  const [postContent, setPostContent] = useState("");
+  const TextInputLimitCheck = (e) => {
+    setPostContent(e.target.value);
+  };
 
   // Use the useForm hook to create a form object
   const form = useForm({
@@ -64,7 +71,22 @@ export const CreatePost = () => {
   return (
     <form onSubmit={form.onSubmit(handleFormSubmit)}>
       <Group direction="column" position="center" grow={true}>
-        <Textarea required {...form.getInputProps("text")} />
+        <Textarea
+          onKeyUp={TextInputLimitCheck}
+          minRows={4}
+          maxRows={10}
+          autosize
+          required
+          {...form.getInputProps("text")}
+          styles={
+            postContent.length > 256
+              ? {
+                  input: { color: "red" },
+                }
+              : null
+          }
+        />
+
         <Dropzone onDrop={handleDropzoneDrop} multiple={true}>
           {() => <Text>Drag image here or click to select file</Text>}
         </Dropzone>
