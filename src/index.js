@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
 import { store } from "./store.js";
-import { UserProfile } from "./features/user-profile/UserProfile";
+import { UserProfile } from "./features/users/user-profile/UserProfile";
 
 ReactDOM.render(
   <React.StrictMode>

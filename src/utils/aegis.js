@@ -25,19 +25,23 @@ const formatUserInfo = (userInfo) => {
   };
 };
 
-export const createUser = async ({ provider, account, name }) => {
-  const aegis = getAegis({ provider, account });
-  const createUserTx = await aegis.createUser(name);
-  await createUserTx.wait();
-  return formatUserInfo(await aegis.users(account));
-};
-
-const formatPostInfo = (post) => {
+//format a post fetched from ethers to a sane and predictable format
+const formatPost = ({ post, creator }) => {
   return {
+    user: post.user,
+    postIndex: post.postIndex.toNumber(),
     text: post.text,
     attachments: post.attachments,
     isPaid: post.isPaid,
+    timestamp: post.timestamp.toNumber(),
   };
+};
+
+export const createUser = async ({ provider, account, username }) => {
+  const aegis = getAegis({ provider, account });
+  const createUserTx = await aegis.createUser(username);
+  await createUserTx.wait();
+  return formatUserInfo(await aegis.users(account));
 };
 
 export const createPost = async ({
@@ -50,10 +54,10 @@ export const createPost = async ({
   const aegis = getAegis({ provider, account });
   const createPostTx = await aegis.createPost(text, attachments, isPaid);
   const txReceipt = await createPostTx.wait();
-  const postCreatedEvent = txReceipt.events?.filter((x) => {
+  const postCreatedEvent = txReceipt.events.filter((x) => {
     return x.event === "PostCreated";
   })[0];
-  return formatPostInfo(postCreatedEvent.args);
+  return formatPost({ post: postCreatedEvent.args, creator: account });
 };
 
 export const getUser = async ({ provider, account }) => {
@@ -63,4 +67,19 @@ export const getUser = async ({ provider, account }) => {
     return null;
   }
   return formatUserInfo(userInfo);
+};
+
+export const getPostsOfUser = async ({ provider, account }) => {
+  const aegis = getAegis({ provider, account });
+  //create a filter for filtering events: account should be the user
+  const filter = aegis.filters.PostCreated(account);
+  //get all the events that match the above filter
+  const postCreatedEvents = await aegis.queryFilter(filter);
+  const posts = postCreatedEvents.map((event) => event.args);
+
+  const formattedPosts = posts.map((post) =>
+    formatPost({ post, creator: account })
+  );
+  console.log(formattedPosts);
+  return formattedPosts;
 };

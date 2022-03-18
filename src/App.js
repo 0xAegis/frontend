@@ -9,9 +9,8 @@ const App = () => {
   return (
     <Navigation>
       <Group direction="column">
-        <Group>
-          <CreateUser />
-        </Group>
+        <CreatePost />
+        <CreateUser />
       </Group>
       <Outlet />
     </Navigation>
