@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
@@ -7,9 +7,11 @@ import { observer } from "mobx-react-lite";
 
 import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
 import { createPost } from "../../../utils/aegis";
+import { AppContext } from "../../..";
 
 // Wrapper over a form for creating posts on Aegis
-export const CreatePost = observer(({ appStore }) => {
+export const CreatePost = observer(() => {
+  const appStore = useContext(AppContext);
   //Keeping track of character count while writing post
   const [postContent, setPostContent] = useState("");
   const TextInputLimitCheck = (e) => {

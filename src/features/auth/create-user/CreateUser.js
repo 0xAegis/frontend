@@ -1,12 +1,15 @@
+import { useEffect, useContext } from "react";
 import { Button, Group, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
-import { useEffect } from "react";
+
 import { observer } from "mobx-react-lite";
 
 import { createUser, getUser } from "../../../utils/aegis";
+import { AppContext } from "../../..";
 
-export const CreateUser = observer(({ appStore }) => {
+export const CreateUser = observer(() => {
+  const appStore = useContext(AppContext);
   const form = useForm({
     // The fields in the form
     initialValues: {

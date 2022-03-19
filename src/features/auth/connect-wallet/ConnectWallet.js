@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { Button, Container } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
+import { AppContext } from "../../..";
 
-const ConnectWallet = observer(({ pb, appStore }) => {
+const ConnectWallet = observer(({ pb }) => {
+  const appStore = useContext(AppContext);
   const [chainIsValid, setChainIsValid] = useState(false);
   const setChainValidty = (network) => {
     if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {

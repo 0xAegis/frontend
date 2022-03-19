@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 
 import { useParams } from "react-router-dom";
 import { Group, Text } from "@mantine/core";
@@ -7,8 +7,10 @@ import { observer } from "mobx-react-lite";
 
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
+import { AppContext } from "../../..";
 
-export const UserProfile = observer(({ appStore }) => {
+export const UserProfile = observer(() => {
+  const appStore = useContext(AppContext);
   const params = useParams();
 
   useEffect(() => {

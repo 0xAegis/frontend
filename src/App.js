@@ -6,12 +6,12 @@ import { CreateUser } from "./features/auth/create-user/CreateUser";
 import Navigation from "./features/navigation/Navigation";
 import { CreatePost } from "./features/posts/create-post/CreatePost";
 
-const App = observer(({ appStore }) => {
+const App = observer(() => {
   return (
-    <Navigation appStore={appStore}>
+    <Navigation>
       <Group direction="column">
-        <CreatePost appStore={appStore} />
-        <CreateUser appStore={appStore} />
+        <CreatePost />
+        <CreateUser />
       </Group>
       <Outlet />
     </Navigation>

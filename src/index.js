@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { createContext } from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -8,25 +9,26 @@ import { GoogleOauthRedirect } from "./routes/oauth";
 import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
 
+export const AppContext = createContext();
 const appStore = new AppStore();
+
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App appStore={appStore} />}>
-          <Route path="user">
-            <Route
-              path=":userPubKey"
-              element={<UserProfile appStore={appStore} />}
-            />
+    <AppContext.Provider value={appStore}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route path="user">
+              <Route path=":userPubKey" element={<UserProfile />} />
+            </Route>
           </Route>
-        </Route>
-        <Route
-          path="/oauth-redirect/google"
-          element={<GoogleOauthRedirect />}
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/oauth-redirect/google"
+            element={<GoogleOauthRedirect />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </AppContext.Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

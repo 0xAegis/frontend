@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 
 import { Button, Container, Text } from "@mantine/core";
 import { SocialLoginType } from "@arcana/auth";
 import { observer } from "mobx-react-lite";
 
 import { getArcanaAuth } from "../../../utils/arcana";
+import { AppContext } from "../../..";
 
-const ConnectArcana = observer(({ appStore }) => {
+const ConnectArcana = observer(() => {
+  const appStore = useContext(AppContext);
   // Check if user is logged in to Arcana
   useEffect(() => {
     const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
 
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      // Update changes to Mobx Store
+      // Update Mobx Store
       appStore.setArcanaAccount(userInfo);
     }
   }, [appStore]);
@@ -25,7 +27,7 @@ const ConnectArcana = observer(({ appStore }) => {
     await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
-      // Update changes to Mobx Store
+      // Update Mobx Store
       appStore.setArcanaAccount(userInfo);
     }
   };
