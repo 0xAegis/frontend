@@ -49,7 +49,7 @@ export const CreatePost = observer(() => {
     console.log("Attachments DIDs:", fileDids);
     const post = await createPost({
       provider,
-      account: appStore.polygonAccounts[0],
+      account: appStore.polygonAccount,
       text: formValues.text,
       attachments: fileDids,
       isPaid: formValues.isPaid,

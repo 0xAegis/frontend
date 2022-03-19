@@ -8,7 +8,6 @@ export class AppStore {
   posts = [];
   arcanaAccount = {};
   polygonAccount = "";
-  network = "";
   chainIsValid = false;
 
   setUser(user) {
