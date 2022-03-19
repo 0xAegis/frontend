@@ -3,43 +3,38 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
+import { observer } from "mobx-react-lite";
 
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
-import { useDispatch, useSelector } from "react-redux";
-import { addUserProfile, selectUserProfile } from "../usersSlice";
 
-export const UserProfile = () => {
+export const UserProfile = observer(({ appStore }) => {
   const params = useParams();
-  const userProfile = useSelector((state) =>
-    selectUserProfile(state, params.userPubKey)
-  );
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!userProfile) {
+      if (!appStore.user.name) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const user = await getUser({ provider, account: params.userPubKey });
         const posts = await getPostsOfUser({
           provider,
           account: params.userPubKey,
         });
-        console.log(user, posts);
-        dispatch(addUserProfile({ user, posts }));
+        // Update Mobx Store
+        appStore.setUser(user);
+        appStore.setPosts(posts);
       }
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, dispatch, userProfile]);
+  }, [params.userPubKey, appStore]);
 
-  return userProfile ? (
+  return appStore.user ? (
     <Group direction="column">
-      <Text weight="bold">{userProfile.user.name}</Text>
-      <PostList posts={userProfile.posts} />
+      <Text weight="bold">{appStore.user.name}</Text>
+      <PostList posts={appStore.posts} />
     </Group>
   ) : (
     <Text>not found</Text>
   );
-};
+});

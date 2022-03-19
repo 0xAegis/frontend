@@ -1,22 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, Container } from "@mantine/core";
 import { ethers } from "ethers";
-import { useSelector, useDispatch } from "react-redux";
+import { observer } from "mobx-react-lite";
 
-import {
-  selectPolygonAccount,
-  selectPolygonChainIsValid,
-  updatePolygonAccounts,
-  updatePolygonNetwork,
-} from "../authSlice";
-
-const ConnectWallet = ({ pb }) => {
-  // Redux dispatcher
-  const dispatch = useDispatch();
-  // fetch account and chainIsValid from the Redux store
-  const account = useSelector(selectPolygonAccount);
-  const chainIsValid = useSelector(selectPolygonChainIsValid);
+const ConnectWallet = observer(({ pb, appStore }) => {
+  const [chainIsValid, setChainIsValid] = useState(false);
+  const setChainValidty = (network) => {
+    if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
+      setChainIsValid(true);
+    }
+  };
 
   // On page load, check whether Metamask is connected and to the right chain
   useEffect(() => {
@@ -31,13 +25,15 @@ const ConnectWallet = ({ pb }) => {
       );
       const accounts = await provider.listAccounts();
       const network = await provider.getNetwork();
-      // Dispatch changes to Redux
-      dispatch(updatePolygonAccounts({ accounts }));
-      dispatch(updatePolygonNetwork({ network }));
+      // Update Mobx Store
+      appStore.setPolygonAccount(accounts[0]);
+      appStore.setNetwork(network);
+
+      setChainValidty(network);
     };
 
     checkPolygonAccounts();
-  }, [dispatch]);
+  }, [appStore]);
 
   // Connect Metamask wallet
   const connectWallet = async () => {
@@ -47,8 +43,8 @@ const ConnectWallet = ({ pb }) => {
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const accounts = await provider.send("eth_requestAccounts");
-    // Dispatch changes to Redux
-    dispatch(updatePolygonAccounts({ accounts }));
+    // Update Mobx Store
+    appStore.setPolygonAccount(accounts[0]);
   };
 
   // Change chain on Metamask to Polygon mainnet
@@ -73,13 +69,14 @@ const ConnectWallet = ({ pb }) => {
       },
     ]);
     const network = await provider.getNetwork();
-    // Dispatch changes to Redux
-    dispatch(updatePolygonNetwork({ network }));
+    // Update Mobx Store
+    appStore.setNetwork(network);
+    setChainValidty(network);
   };
 
   return (
     <Container pb={pb} fluid>
-      {account ? (
+      {appStore.polygonAccount ? (
         chainIsValid ? (
           <Button
             fullWidth
@@ -88,7 +85,11 @@ const ConnectWallet = ({ pb }) => {
               e.preventDefault();
             }}
           >
-            Connected: {`${account.slice(0, 3)}...${account.slice(-3)}`}
+            Connected:{" "}
+            {`${appStore.polygonAccount.slice(
+              0,
+              3
+            )}...${appStore.polygonAccount.slice(-3)}`}
           </Button>
         ) : (
           <Button fullWidth color="yellow" onClick={changeChain}>
@@ -108,6 +109,6 @@ const ConnectWallet = ({ pb }) => {
       )}
     </Container>
   );
-};
+});
 
 export default ConnectWallet;

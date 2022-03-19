@@ -9,11 +9,12 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import ConnectWallet from "../auth/connect-wallet/ConnectWallet";
 import ConnectArcana from "../auth/connect-arcana/ConnectArcana";
 
-const Navigation = ({ children }) => {
+const Navigation = observer(({ children, appStore }) => {
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
 
@@ -33,8 +34,8 @@ const Navigation = ({ children }) => {
           </Navbar.Section>
           <Navbar.Section grow mt="md"></Navbar.Section>
           <Navbar.Section mb="xl">
-            <ConnectWallet pb={20} />
-            <ConnectArcana />
+            <ConnectWallet pb={20} appStore={appStore} />
+            <ConnectArcana appStore={appStore} />
           </Navbar.Section>
         </Navbar>
       }
@@ -61,6 +62,6 @@ const Navigation = ({ children }) => {
       {children}
     </AppShell>
   );
-};
+});
 
 export default Navigation;
