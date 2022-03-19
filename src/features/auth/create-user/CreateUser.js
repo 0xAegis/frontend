@@ -20,11 +20,27 @@ export const CreateUser = observer(() => {
   // On page load, check whether user has an account in Aegis
   useEffect(() => {
     const checkAegisAccount = async () => {
-      if (!appStore.polygonAccount) {
-        return;
-      }
+      //   const accounts = await provider.listAccounts();
+      //   const network = await provider.getNetwork();
+      //   // Update Mobx Store
+      //   appStore.setPolygonAccount(accounts[0]);
+      //   appStore.setChainIsValid(network);
+      //   if (!appStore.polygonAccount) {
+      //     console.log("no account");
+      //     return;
+      //   }
+      // if (!window.ethereum) {
+      //   console.log("Metamask is not installed.");
+      //   return;
+      // }
+
+      //Checking If connection status is false
+
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
+        return;
+      }
+      if (!appStore.connectionStatus) {
         return;
       }
       const provider = new ethers.providers.Web3Provider(
@@ -46,6 +62,12 @@ export const CreateUser = observer(() => {
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
     console.log(formValues);
+
+    //Checking If connection status is false
+    if (!appStore.connectionStatus) {
+      return;
+    }
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const userInfo = await createUser({
       provider,

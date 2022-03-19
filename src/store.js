@@ -8,8 +8,8 @@ export class AppStore {
   posts = [];
   arcanaAccount = {};
   polygonAccount = "";
-  network = "";
   chainIsValid = false;
+  connectionStatus = false;
 
   setUser(user) {
     this.user = user;
@@ -29,6 +29,12 @@ export class AppStore {
   setChainIsValid(network) {
     if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
       this.chainIsValid = true;
+    }
+  }
+
+  setConnectionStatus() {
+    if (this.polygonAccount && this.chainIsValid) {
+      this.connectionStatus = true;
     }
   }
 }

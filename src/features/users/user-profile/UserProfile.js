@@ -15,8 +15,19 @@ export const UserProfile = observer(() => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!appStore.user.name) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+      if (!window.ethereum) {
+        console.log("Metamask is not installed.");
+        return;
+      }
+      //Checking If connection status is false
+      if (!appStore.connectionStatus) {
+        return;
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      //Introduce try catch block to handle error rising out of url with invalid account addresses
+      try {
         const user = await getUser({ provider, account: params.userPubKey });
         const posts = await getPostsOfUser({
           provider,
@@ -25,13 +36,15 @@ export const UserProfile = observer(() => {
         // Update Mobx Store
         appStore.setUser(user);
         appStore.setPosts(posts);
+      } catch {
+        console.log("error: check url for invalid account addresss");
       }
     };
 
     fetchUserInfo();
   }, [params.userPubKey, appStore]);
 
-  return appStore.user ? (
+  return appStore.user.name ? (
     <Group direction="column">
       <Text weight="bold">{appStore.user.name}</Text>
       <PostList posts={appStore.posts} />

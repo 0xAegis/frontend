@@ -12,8 +12,9 @@ import {
 
 import ConnectWallet from "../auth/connect-wallet/ConnectWallet";
 import ConnectArcana from "../auth/connect-arcana/ConnectArcana";
+import { observer } from "mobx-react-lite";
 
-const Navigation = ({ children }) => {
+const Navigation = observer(({ children }) => {
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
 
@@ -61,6 +62,6 @@ const Navigation = ({ children }) => {
       {children}
     </AppShell>
   );
-};
+});
 
 export default Navigation;
