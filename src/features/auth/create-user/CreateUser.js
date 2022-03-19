@@ -36,6 +36,8 @@ export const CreateUser = observer(() => {
         account: appStore.polygonAccount,
       });
       console.log(userInfo);
+      // Update Mobx Store
+      appStore.setUser(userInfo);
     };
 
     checkAegisAccount();
