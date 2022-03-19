@@ -9,6 +9,7 @@ export class AppStore {
   arcanaAccount = {};
   polygonAccount = "";
   network = "";
+  chainIsValid = false;
 
   setUser(user) {
     this.user = user;
@@ -24,7 +25,10 @@ export class AppStore {
   setPolygonAccount(polygonAccount) {
     this.polygonAccount = polygonAccount;
   }
-  setNetwork(network) {
-    this.network = network;
+
+  setChainIsValid(network) {
+    if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
+      this.chainIsValid = true;
+    }
   }
 }

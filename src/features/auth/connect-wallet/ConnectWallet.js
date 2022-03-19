@@ -7,12 +7,6 @@ import { AppContext } from "../../..";
 
 const ConnectWallet = observer(({ pb }) => {
   const appStore = useContext(AppContext);
-  const [chainIsValid, setChainIsValid] = useState(false);
-  const setChainValidty = (network) => {
-    if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
-      setChainIsValid(true);
-    }
-  };
 
   // On page load, check whether Metamask is connected and to the right chain
   useEffect(() => {
@@ -29,9 +23,7 @@ const ConnectWallet = observer(({ pb }) => {
       const network = await provider.getNetwork();
       // Update Mobx Store
       appStore.setPolygonAccount(accounts[0]);
-      appStore.setNetwork(network);
-
-      setChainValidty(network);
+      appStore.setChainIsValid(network);
     };
 
     checkPolygonAccounts();
@@ -72,14 +64,13 @@ const ConnectWallet = observer(({ pb }) => {
     ]);
     const network = await provider.getNetwork();
     // Update Mobx Store
-    appStore.setNetwork(network);
-    setChainValidty(network);
+    appStore.setChainIsValid(network);
   };
 
   return (
     <Container pb={pb} fluid>
       {appStore.polygonAccount ? (
-        chainIsValid ? (
+        appStore.chainIsValid ? (
           <Button
             fullWidth
             color="lime"
