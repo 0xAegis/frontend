@@ -30,4 +30,11 @@ export class AppStore {
       this.chainIsValid = true;
     }
   }
+
+  get connectionStatus() {
+    if (this.polygonAccount && this.chainIsValid) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -31,6 +31,14 @@ export const CreatePost = observer(() => {
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
     console.log(formValues);
+    //Checking If connection status is false
+    if (!window.ethereum) {
+      console.log("Metamask is not installed.");
+      return;
+    }
+    if (!appStore.connectionStatus) {
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // Upload the files to Arcana
     const arcanaStorage = getArcanaStorage({

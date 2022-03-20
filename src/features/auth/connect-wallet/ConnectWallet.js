@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 
 import { Button, Container } from "@mantine/core";
 import { ethers } from "ethers";
@@ -7,27 +7,6 @@ import { AppContext } from "../../..";
 
 const ConnectWallet = observer(({ pb }) => {
   const appStore = useContext(AppContext);
-
-  // On page load, check whether Metamask is connected and to the right chain
-  useEffect(() => {
-    const checkPolygonAccounts = async () => {
-      if (!window.ethereum) {
-        console.log("Metamask is not installed.");
-        return;
-      }
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      const accounts = await provider.listAccounts();
-      const network = await provider.getNetwork();
-      // Update Mobx Store
-      appStore.setPolygonAccount(accounts[0]);
-      appStore.setChainIsValid(network);
-    };
-
-    checkPolygonAccounts();
-  }, [appStore]);
 
   // Connect Metamask wallet
   const connectWallet = async () => {
