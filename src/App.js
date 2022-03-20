@@ -1,7 +1,7 @@
 import { useEffect, useContext } from "react";
 
 import { observer } from "mobx-react-lite";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
 import Navigation from "./features/navigation/Navigation";
@@ -10,6 +10,7 @@ import { AppContext } from ".";
 const App = observer(() => {
   const appStore = useContext(AppContext);
   let navigate = useNavigate();
+  let params = useParams();
 
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
@@ -40,11 +41,12 @@ const App = observer(() => {
   });
 
   //Navigate to connected user's profile page
+  //Don't navigate if url param has pubkey
   useEffect(() => {
-    if (appStore.polygonAccount) {
+    if (appStore.polygonAccount && !params.userPubKey) {
       navigate("/user/" + appStore.polygonAccount);
     }
-  }, [appStore.polygonAccount, navigate]);
+  }, [appStore.polygonAccount, navigate, params.userPubKey]);
 
   // Handle when chain (network) is changed
   useEffect(() => {

@@ -50,7 +50,8 @@ export const UserProfile = observer(() => {
   return user !== null ? (
     <Group direction="column">
       <Text weight="bold">{user.name}</Text>
-      <CreatePost />
+      {params.userPubKey === appStore.polygonAccount ? <CreatePost /> : null}
+
       <PostList posts={posts} />
     </Group>
   ) : (
