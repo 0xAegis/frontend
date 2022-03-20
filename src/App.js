@@ -40,6 +40,39 @@ const App = observer(() => {
     };
     checkConnectionStatus();
   });
+
+  /* Handle when chain (network) is changed  */
+  useEffect(() => {
+    const handleChainChanged = (chainId) => {
+      // It is recommended to reload the page
+      window.location.reload();
+    };
+    window.ethereum.on("chainChanged", handleChainChanged);
+
+    // Remove event listener on cleanup
+    return () => {
+      window.ethereum.removeListener("chainChanged", handleChainChanged);
+    };
+  });
+
+  /* Handle when main account is changed  */
+  useEffect(() => {
+    const handleAccountsChanged = (accounts) => {
+      if (accounts.length === 0) {
+        // MetaMask is locked or the user has not connected any accounts
+        console.log("Please connect to MetaMask.");
+      } else if (accounts[0] !== appStore.polygonAccount) {
+        appStore.setPolygonAccount(accounts[0]);
+      }
+    };
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+
+    // Remove event listener on cleanup
+    return () => {
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+    };
+  });
+
   return (
     <Navigation>
       <Group direction="column">
