@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text } from "@mantine/core";
+import { Group, Text, Title } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
@@ -47,7 +47,8 @@ export const UserProfile = observer(() => {
 
   return user ? (
     <Group direction="column">
-      <Text weight="bold">{user.name}</Text>
+      <Title order={1}>{user.name}</Title>
+      <Text>@{params.userPubKey}</Text>
       <PostList posts={posts} />
     </Group>
   ) : (
