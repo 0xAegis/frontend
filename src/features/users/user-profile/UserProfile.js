@@ -43,7 +43,7 @@ export const UserProfile = observer(() => {
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, user, appStore]);
+  }, [params.userPubKey, appStore.connectionStatus]);
 
   return user ? (
     <Group direction="column">
