@@ -1,20 +1,15 @@
+import { useEffect, useContext } from "react";
 import { Button, Group, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
+import { observer } from "mobx-react-lite";
+
 import { createUser, getUser } from "../../../utils/aegis";
-import {
-  loginToAegis,
-  selectAegisUserInfo,
-  selectPolygonAccount,
-} from "../authSlice";
+import { AppContext } from "../../..";
 
-export const CreateUser = () => {
-  const dispatch = useDispatch();
-  const polygonAccount = useSelector(selectPolygonAccount);
-  const aegisUserInfo = useSelector(selectAegisUserInfo);
-
+export const CreateUser = observer(() => {
+  const appStore = useContext(AppContext);
   const form = useForm({
     // The fields in the form
     initialValues: {
@@ -25,7 +20,7 @@ export const CreateUser = () => {
   // On page load, check whether user has an account in Aegis
   useEffect(() => {
     const checkAegisAccount = async () => {
-      if (!polygonAccount) {
+      if (!appStore.polygonAccount) {
         return;
       }
       if (!window.ethereum) {
@@ -36,13 +31,17 @@ export const CreateUser = () => {
         window.ethereum,
         "any"
       );
-      const userInfo = await getUser({ provider, account: polygonAccount });
+      const userInfo = await getUser({
+        provider,
+        account: appStore.polygonAccount,
+      });
       console.log(userInfo);
-      dispatch(loginToAegis({ userInfo }));
+      // Update Mobx Store
+      appStore.setUser(userInfo);
     };
 
     checkAegisAccount();
-  }, [dispatch, polygonAccount]);
+  }, [appStore]);
 
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
@@ -50,15 +49,16 @@ export const CreateUser = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const userInfo = await createUser({
       provider,
-      account: polygonAccount,
+      account: appStore.polygonAccount,
       name: formValues.name,
     });
     console.log(userInfo);
-    dispatch(loginToAegis({ userInfo }));
+    // Update Mobx Store
+    appStore.setUser(userInfo);
   };
 
-  return aegisUserInfo ? (
-    <Text>Logged in as: {aegisUserInfo.name}</Text>
+  return appStore.user.name ? (
+    <Text>Logged in as: {appStore.user.name}</Text>
   ) : (
     <form onSubmit={form.onSubmit(handleFormSubmit)}>
       <Group direction="column" position="center" grow={true}>
@@ -69,4 +69,4 @@ export const CreateUser = () => {
       </Group>
     </form>
   );
-};
+});

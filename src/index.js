@@ -1,17 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { createContext } from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
 
 import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
-import { store } from "./store.js";
+import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
+
+export const AppContext = createContext();
+const appStore = new AppStore();
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <AppContext.Provider value={appStore}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
@@ -25,7 +28,7 @@ ReactDOM.render(
           />
         </Routes>
       </BrowserRouter>
-    </Provider>
+    </AppContext.Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

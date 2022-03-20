@@ -1,12 +1,33 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { makeAutoObservable } from "mobx";
 
-import authReducer from "./features/auth/authSlice";
-import usersReducer from "./features/users/usersSlice";
+export class AppStore {
+  constructor() {
+    makeAutoObservable(this);
+  }
+  user = {};
+  posts = [];
+  arcanaAccount = {};
+  polygonAccount = "";
+  chainIsValid = false;
 
-// Configure the root store combining the individual Slices
-export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    users: usersReducer,
-  },
-});
+  setUser(user) {
+    this.user = user;
+  }
+  setPosts(posts) {
+    this.posts = posts;
+  }
+
+  setArcanaAccount(arcanaAccount) {
+    this.arcanaAccount = arcanaAccount;
+  }
+
+  setPolygonAccount(polygonAccount) {
+    this.polygonAccount = polygonAccount;
+  }
+
+  setChainIsValid(network) {
+    if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
+      this.chainIsValid = true;
+    }
+  }
+}
