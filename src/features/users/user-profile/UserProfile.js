@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { Group, Text } from "@mantine/core";
@@ -10,8 +10,10 @@ import { PostList } from "../../posts/post-list/PostList";
 import { AppContext } from "../../..";
 
 export const UserProfile = observer(() => {
-  const appStore = useContext(AppContext);
+  const [user, setUser] = useState({});
+  const [posts, setPosts] = useState([]);
   const params = useParams();
+  const appStore = useContext(AppContext);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -33,21 +35,20 @@ export const UserProfile = observer(() => {
           provider,
           account: params.userPubKey,
         });
-        // Update Mobx Store
-        appStore.setUser(user);
-        appStore.setPosts(posts);
+        setUser(user);
+        setPosts(posts);
       } catch {
         console.log("error: check url for invalid account addresss");
       }
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, appStore]);
+  }, [params.userPubKey, user, appStore]);
 
-  return appStore.user.name ? (
+  return user ? (
     <Group direction="column">
-      <Text weight="bold">{appStore.user.name}</Text>
-      <PostList posts={appStore.posts} />
+      <Text weight="bold">{user.name}</Text>
+      <PostList posts={posts} />
     </Group>
   ) : (
     <Text>not found</Text>
