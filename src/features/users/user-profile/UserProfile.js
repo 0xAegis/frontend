@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text, Title } from "@mantine/core";
+import { Group, Text, Title, Notification } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
@@ -45,13 +45,15 @@ export const UserProfile = observer(() => {
     fetchUserInfo();
   }, [params.userPubKey, appStore.connectionStatus]);
 
-  return user ? (
+  return user.name ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
       <Text>@{params.userPubKey}</Text>
       <PostList posts={posts} />
     </Group>
   ) : (
-    <Text>not found</Text>
+    <Notification color="red" disallowClose>
+      User Not Found!{" "}
+    </Notification>
   );
 });
