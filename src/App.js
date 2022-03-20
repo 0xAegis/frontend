@@ -40,7 +40,7 @@ const App = observer(() => {
     checkConnectionStatus();
   });
 
-  /* Handle when chain (network) is changed  */
+  // Handle when chain (network) is changed
   useEffect(() => {
     const handleChainChanged = (chainId) => {
       // It is recommended to reload the page
@@ -54,7 +54,7 @@ const App = observer(() => {
     };
   });
 
-  /* Handle when main account is changed  */
+  // Handle when main account is changed
   useEffect(() => {
     const handleAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
