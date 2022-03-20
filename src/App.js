@@ -36,7 +36,6 @@ const App = observer(() => {
         console.log("Chain is not valid");
         return;
       }
-      appStore.setConnectionStatus();
     };
     checkConnectionStatus();
   });

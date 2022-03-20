@@ -9,7 +9,6 @@ export class AppStore {
   arcanaAccount = {};
   polygonAccount = "";
   chainIsValid = false;
-  connectionStatus = false;
 
   setUser(user) {
     this.user = user;
@@ -32,9 +31,10 @@ export class AppStore {
     }
   }
 
-  setConnectionStatus() {
+  get connectionStatus() {
     if (this.polygonAccount && this.chainIsValid) {
-      this.connectionStatus = true;
+      return true;
     }
+    return false;
   }
 }
