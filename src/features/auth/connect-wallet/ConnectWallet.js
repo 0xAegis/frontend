@@ -18,7 +18,6 @@ const ConnectWallet = observer(({ pb }) => {
     const accounts = await provider.send("eth_requestAccounts");
     // Update Mobx Store
     appStore.setPolygonAccount(accounts[0]);
-    appStore.setConnectionStatus();
   };
 
   // Change chain on Metamask to Polygon mainnet
@@ -45,7 +44,6 @@ const ConnectWallet = observer(({ pb }) => {
     const network = await provider.getNetwork();
     // Update Mobx Store
     appStore.setChainIsValid(network);
-    appStore.setConnectionStatus();
   };
 
   return (
