@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { Group, Text } from "@mantine/core";
@@ -7,15 +7,15 @@ import { observer } from "mobx-react-lite";
 
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
-import { AppContext } from "../../..";
 
 export const UserProfile = observer(() => {
-  const appStore = useContext(AppContext);
+  const [user, setUser] = useState({});
+  const [posts, setPosts] = useState([]);
   const params = useParams();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!appStore.user.name) {
+      if (!user.name) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const user = await getUser({ provider, account: params.userPubKey });
         const posts = await getPostsOfUser({
@@ -23,18 +23,18 @@ export const UserProfile = observer(() => {
           account: params.userPubKey,
         });
         // Update Mobx Store
-        appStore.setUser(user);
-        appStore.setPosts(posts);
+        setUser(user);
+        setPosts(posts);
       }
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, appStore]);
+  }, [params.userPubKey, user]);
 
-  return appStore.user ? (
+  return user ? (
     <Group direction="column">
-      <Text weight="bold">{appStore.user.name}</Text>
-      <PostList posts={appStore.posts} />
+      <Text weight="bold">{user.name}</Text>
+      <PostList posts={posts} />
     </Group>
   ) : (
     <Text>not found</Text>
