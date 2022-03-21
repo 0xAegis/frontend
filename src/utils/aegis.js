@@ -1,8 +1,9 @@
 import { Contract, ethers } from "ethers";
 
-import { abi } from "./Aegis.json";
+import { abi as aegisABI } from "./Aegis.json";
+import { abi as aegisFollowersABI } from "./AegisFollowers.json";
 
-export const getAegis = ({ provider, account }) => {
+const getAegis = ({ provider, account }) => {
   let signerOrProvider;
   if (account) {
     signerOrProvider = provider.getSigner(account);
@@ -11,7 +12,7 @@ export const getAegis = ({ provider, account }) => {
   }
   const contract = new Contract(
     process.env.REACT_APP_AEGIS_ADDRESS,
-    abi,
+    aegisABI,
     signerOrProvider
   );
   return contract;
@@ -82,4 +83,32 @@ export const getPostsOfUser = async ({ provider, account }) => {
   );
   console.log(formattedPosts);
   return formattedPosts;
+};
+
+export const followUser = async ({ provider, account, user }) => {
+  const aegis = getAegis({ provider, account });
+  const followUserTx = await aegis.followUser(user);
+  await followUserTx.wait();
+};
+
+export const getFollowerNftCount = async ({ provider, follower, followed }) => {
+  const followedUser = await getUser({ provider, account: followed });
+  if (!followedUser) {
+    return;
+  }
+  const aegisFollowers = new Contract(
+    followedUser.nftAddress,
+    aegisFollowersABI,
+    provider
+  );
+  return (await aegisFollowers.balanceOf(follower)).toNumber();
+};
+
+export const getUserHasFollowerNft = async ({
+  provider,
+  follower,
+  followed,
+}) => {
+  const aegis = getAegis({ provider });
+  return aegis.userHasFollowerNft(followed, follower);
 };

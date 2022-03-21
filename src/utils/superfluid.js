@@ -5,23 +5,31 @@ const getSuperfluid = async ({ provider }) => {
     networkName: process.env.REACT_APP_NETWORK_NAME,
     provider: provider,
   });
-  const signer = sf.createSigner({ provider });
+  console.log("creatin signer");
+  const signer = sf.createSigner({ web3Provider: provider });
   return { sf, signer };
 };
 
 export const createFlow = async ({ provider, recipient, flowRate }) => {
+  console.log("creating flow");
   const { sf, signer } = await getSuperfluid({ provider });
+  console.log("creating flow 1");
 
   try {
     const createFlowOperation = sf.cfaV1.createFlow({
       flowRate: flowRate,
       receiver: recipient,
-      superToken: process.env.REACT_APP_DAIX_ADDRESS,
+      superToken: process.env.REACT_APP_USDCX_ADDRESS,
+      overrides: {
+        gasLimit: 1000000,
+      },
     });
     console.log("Creating your stream...");
     const result = await createFlowOperation.exec(signer);
     console.log(result);
   } catch (error) {
+    console.log("creating flow error");
+
     console.error(error);
   }
 };

@@ -1,21 +1,29 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text, Title, Notification } from "@mantine/core";
+import { Group, Text, Title, Notification, Button } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
 import { CreateUser } from "../../auth/create-user/CreateUser";
 import { CreatePost } from "../../posts/create-post/CreatePost";
-import { getPostsOfUser, getUser } from "../../../utils/aegis";
+import {
+  getFollowerNftCount,
+  getPostsOfUser,
+  getUser,
+  getUserHasFollowerNft,
+} from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
 import { AppContext } from "../../..";
+import { createFlow } from "../../../utils/superfluid";
 
 export const UserProfile = observer(() => {
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const params = useParams();
   const appStore = useContext(AppContext);
+  const [user, setUser] = useState({});
+  const [posts, setPosts] = useState([]);
+  const [hasOwnFollowerNft, setHasOwnFollowerNft] = useState(false);
+  const [hasSomeFollowerNft, setHasSomeFollowerNft] = useState(false);
+  const params = useParams();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -41,17 +49,53 @@ export const UserProfile = observer(() => {
         setPosts(posts);
       } catch {
         console.log("error: check url for invalid account addresss");
+        const followerNftCount = await getFollowerNftCount({
+          provider,
+          follower: appStore.polygonAccount,
+          followed: params.userPubKey,
+        });
+        const userHasFollowerNft = await getUserHasFollowerNft({
+          provider,
+          follower: appStore.polygonAccount,
+          followed: params.userPubKey,
+        });
+        // Update state
+        setUser(user);
+        setPosts(posts);
+        setHasSomeFollowerNft(followerNftCount > 0);
+        setHasOwnFollowerNft(userHasFollowerNft);
       }
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, appStore.connectionStatus, appStore.user]);
+  }, [
+    params.userPubKey,
+    appStore.connectionStatus,
+    appStore.user,
+    appStore.polygonAccount,
+    posts,
+    user,
+  ]);
+
+  const handleFollowUser = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // await followUser({
+    //   provider,
+    //   account: appStore.polygonAccount,
+    //   user: params.userPubKey,
+    // });
+    await createFlow({ provider, recipient: params.userPubKey, flowRate: 1 });
+  };
 
   return user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
       <Text>@{params.userPubKey}</Text>
-      {params.userPubKey === appStore.polygonAccount ? <CreatePost /> : null}
+      {params.userPubKey === appStore.polygonAccount ? (
+        <CreatePost />
+      ) : (
+        <Button onClick={handleFollowUser}>Follow User</Button>
+      )}
       <PostList posts={posts} />
     </Group>
   ) : (
