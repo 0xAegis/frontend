@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text } from "@mantine/core";
+import { Group, Text, Title, Notification } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
@@ -12,7 +12,7 @@ import { PostList } from "../../posts/post-list/PostList";
 import { AppContext } from "../../..";
 
 export const UserProfile = observer(() => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const params = useParams();
   const appStore = useContext(AppContext);
@@ -49,12 +49,20 @@ export const UserProfile = observer(() => {
 
   return user !== null ? (
     <Group direction="column">
-      <Text weight="bold">{user.name}</Text>
+      <Title order={1}>{user.name}</Title>
+      <Text>@{params.userPubKey}</Text>
       {params.userPubKey === appStore.polygonAccount ? <CreatePost /> : null}
-
       <PostList posts={posts} />
     </Group>
   ) : (
-    <CreateUser />
+    <>
+      {params.userPubKey === appStore.polygonAccount ? (
+        <CreateUser />
+      ) : (
+        <Notification color="red" disallowClose>
+          User Not Found!{" "}
+        </Notification>
+      )}
+    </>
   );
 });

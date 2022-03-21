@@ -67,9 +67,7 @@ export const CreateUser = observer(() => {
     appStore.setUser(userInfo);
   };
 
-  return appStore.user !== null ? (
-    <Text>Logged in as: {appStore.user.name}</Text>
-  ) : (
+  return (
     <form onSubmit={form.onSubmit(handleFormSubmit)}>
       <Group direction="column" position="center" grow={true}>
         <TextInput required {...form.getInputProps("name")} />
