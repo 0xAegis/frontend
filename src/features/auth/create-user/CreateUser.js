@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react";
-import { Button, Group, Text, TextInput } from "@mantine/core";
+import { Button, Group, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
 
