@@ -5,12 +5,14 @@ import { Group, Text, Title, Notification } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
+import { CreateUser } from "../../auth/create-user/CreateUser";
+import { CreatePost } from "../../posts/create-post/CreatePost";
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
 import { AppContext } from "../../..";
 
 export const UserProfile = observer(() => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const params = useParams();
   const appStore = useContext(AppContext);
@@ -43,17 +45,24 @@ export const UserProfile = observer(() => {
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, appStore.connectionStatus]);
+  }, [params.userPubKey, appStore.connectionStatus, appStore.user]);
 
-  return user.name ? (
+  return user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
       <Text>@{params.userPubKey}</Text>
+      {params.userPubKey === appStore.polygonAccount ? <CreatePost /> : null}
       <PostList posts={posts} />
     </Group>
   ) : (
-    <Notification color="red" disallowClose>
-      User Not Found!{" "}
-    </Notification>
+    <>
+      {params.userPubKey === appStore.polygonAccount ? (
+        <CreateUser />
+      ) : (
+        <Notification color="red" disallowClose>
+          User Not Found!{" "}
+        </Notification>
+      )}
+    </>
   );
 });
