@@ -67,7 +67,7 @@ export const CreateUser = observer(() => {
     appStore.setUser(userInfo);
   };
 
-  return appStore.user.name ? (
+  return appStore.user !== null ? (
     <Text>Logged in as: {appStore.user.name}</Text>
   ) : (
     <form onSubmit={form.onSubmit(handleFormSubmit)}>

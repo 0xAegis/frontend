@@ -1,17 +1,17 @@
 import { useEffect, useContext } from "react";
 
-import { Group } from "@mantine/core";
 import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
-import { CreateUser } from "./features/auth/create-user/CreateUser";
 import Navigation from "./features/navigation/Navigation";
-import { CreatePost } from "./features/posts/create-post/CreatePost";
 import { AppContext } from ".";
 
 const App = observer(() => {
   const appStore = useContext(AppContext);
+  let navigate = useNavigate();
+  let params = useParams();
+
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
     const checkConnectionStatus = async () => {
@@ -39,6 +39,14 @@ const App = observer(() => {
     };
     checkConnectionStatus();
   });
+
+  //Navigate to connected user's profile page
+  //Don't navigate if url param has pubkey
+  useEffect(() => {
+    if (appStore.polygonAccount && !params.userPubKey) {
+      navigate("/user/" + appStore.polygonAccount);
+    }
+  }, [appStore.polygonAccount, navigate, params.userPubKey]);
 
   // Handle when chain (network) is changed
   useEffect(() => {
@@ -74,10 +82,6 @@ const App = observer(() => {
 
   return (
     <Navigation>
-      <Group direction="column">
-        <CreatePost />
-        <CreateUser />
-      </Group>
       <Outlet />
     </Navigation>
   );

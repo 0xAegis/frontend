@@ -5,6 +5,8 @@ import { Group, Text } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
+import { CreateUser } from "../../auth/create-user/CreateUser";
+import { CreatePost } from "../../posts/create-post/CreatePost";
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
 import { AppContext } from "../../..";
@@ -43,14 +45,16 @@ export const UserProfile = observer(() => {
     };
 
     fetchUserInfo();
-  }, [params.userPubKey, appStore.connectionStatus]);
+  }, [params.userPubKey, appStore.connectionStatus, appStore.user]);
 
-  return user ? (
+  return user !== null ? (
     <Group direction="column">
       <Text weight="bold">{user.name}</Text>
+      {params.userPubKey === appStore.polygonAccount ? <CreatePost /> : null}
+
       <PostList posts={posts} />
     </Group>
   ) : (
-    <Text>not found</Text>
+    <CreateUser />
   );
 });
