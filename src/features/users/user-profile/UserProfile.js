@@ -1,11 +1,10 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text, Title, Notification } from "@mantine/core";
+import { Group, Text, Title, Loader } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
-import { CreateUser } from "../../auth/create-user/CreateUser";
 import { CreatePost } from "../../posts/create-post/CreatePost";
 import { getPostsOfUser, getUser } from "../../../utils/aegis";
 import { PostList } from "../../posts/post-list/PostList";
@@ -14,6 +13,7 @@ import { AppContext } from "../../..";
 export const UserProfile = observer(() => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const appStore = useContext(AppContext);
 
@@ -27,7 +27,7 @@ export const UserProfile = observer(() => {
       if (!appStore.connectionStatus) {
         return;
       }
-
+      setLoading(true);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
 
       //Introduce try catch block to handle error rising out of url with invalid account addresses
@@ -42,12 +42,19 @@ export const UserProfile = observer(() => {
       } catch {
         console.log("error: check url for invalid account addresss");
       }
+
+      setLoading(false);
     };
 
     fetchUserInfo();
   }, [params.userPubKey, appStore.connectionStatus, appStore.user]);
 
-  return user !== null ? (
+  return loading ? (
+    <Group direction="row">
+      <Text size="xl">Loading...</Text>
+      <Loader />
+    </Group>
+  ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
       <Text>@{params.userPubKey}</Text>
@@ -55,14 +62,6 @@ export const UserProfile = observer(() => {
       <PostList posts={posts} />
     </Group>
   ) : (
-    <>
-      {params.userPubKey === appStore.polygonAccount ? (
-        <CreateUser />
-      ) : (
-        <Notification color="red" disallowClose>
-          User Not Found!{" "}
-        </Notification>
-      )}
-    </>
+    <Title order={2}>This user doesn't exist.</Title>
   );
 });
