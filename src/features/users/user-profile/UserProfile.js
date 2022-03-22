@@ -50,7 +50,10 @@ export const UserProfile = observer(() => {
   }, [params.userPubKey, appStore.connectionStatus, appStore.user]);
 
   return loading ? (
-    <Loader />
+    <Group direction="row">
+      <Text size="xl">Loading...</Text>
+      <Loader />
+    </Group>
   ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
@@ -59,6 +62,6 @@ export const UserProfile = observer(() => {
       <PostList posts={posts} />
     </Group>
   ) : (
-    <Title order={1}>This user doesn't exist.</Title>
+    <Title order={2}>This user doesn't exist.</Title>
   );
 });
