@@ -22,7 +22,7 @@ import {
 
 export const UserProfile = observer(() => {
   const appStore = useContext(AppContext);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
