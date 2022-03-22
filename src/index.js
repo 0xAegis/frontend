@@ -9,6 +9,7 @@ import { GoogleOauthRedirect } from "./routes/oauth";
 import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
+
 export const AppContext = createContext();
 const appStore = new AppStore();
 

@@ -7,10 +7,9 @@ import { ethers } from "ethers";
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
 import { getUser } from "./utils/aegis";
+
 const App = observer(() => {
   const appStore = useContext(AppContext);
-  // let navigate = useNavigate();
-  // let params = useParams();
 
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
