@@ -8,7 +8,6 @@ import { observer } from "mobx-react-lite";
 import { CreatePost } from "../../posts/create-post/CreatePost";
 import {
   followUser,
-  getFollowerNftCount,
   getPostsOfUser,
   getUser,
   getUserHasFollowerNft,
@@ -25,9 +24,7 @@ export const UserProfile = observer(() => {
   const appStore = useContext(AppContext);
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
-  const [hasOwnFollowerNft, setHasOwnFollowerNft] = useState(false);
-  const [hasSomeFollowerNft, setHasSomeFollowerNft] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
   const params = useParams();
 
@@ -51,11 +48,6 @@ export const UserProfile = observer(() => {
           provider,
           account: params.userPubKey,
         });
-        const followerNftCount = await getFollowerNftCount({
-          provider,
-          follower: appStore.polygonAccount,
-          followed: params.userPubKey,
-        });
         const userHasFollowerNft = await getUserHasFollowerNft({
           provider,
           follower: appStore.polygonAccount,
@@ -66,16 +58,15 @@ export const UserProfile = observer(() => {
           sender: appStore.polygonAccount,
           receiver: params.userPubKey,
         });
+        const isFollowing =
+          userHasFollowerNft &&
+          flowInfo &&
+          flowInfo.flowRate >= process.env.REACT_APP_SUPERFLUID_FLOW_RATE;
 
         // Update state
         setUser(user);
         setPosts(posts);
-        setHasSomeFollowerNft(followerNftCount > 0);
-        setHasOwnFollowerNft(userHasFollowerNft);
-        setIsPaying(
-          flowInfo &&
-            flowInfo.flowRate >= process.env.REACT_APP_SUPERFLUID_FLOW_RATE
-        );
+        setIsFollowing(isFollowing);
       } catch {
         console.log("error: check url for invalid account addresss");
       }
@@ -91,53 +82,37 @@ export const UserProfile = observer(() => {
     appStore.polygonAccount,
   ]);
 
-  const handleMintFollowerNft = async () => {
+  const handleFollow = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await followUser({
+    const userHasFollowerNft = await getUserHasFollowerNft({
       provider,
-      account: appStore.polygonAccount,
-      user: params.userPubKey,
+      follower: appStore.polygonAccount,
+      followed: params.userPubKey,
     });
-  };
-
-  const handleCreateFlow = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (!userHasFollowerNft) {
+      await followUser({
+        provider,
+        account: appStore.polygonAccount,
+        user: params.userPubKey,
+      });
+    }
     await createOrUpdateFlow({
       provider,
       sender: appStore.polygonAccount,
       receiver: params.userPubKey,
     });
+    setIsFollowing(true);
   };
 
-  const handleDeleteFlow = async () => {
+  const handleUnfollow = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await deleteFlow({
       provider,
       sender: appStore.polygonAccount,
       receiver: params.userPubKey,
     });
+    setIsFollowing(false);
   };
-
-  const FollowButtons = () => (
-    <Group direction="column">
-      {hasOwnFollowerNft ? (
-        <Text>You have your own follower NFT</Text>
-      ) : hasSomeFollowerNft ? (
-        <Button onClick={handleMintFollowerNft}>
-          You have follower NFTs, you can also mint your own! Click here
-        </Button>
-      ) : (
-        <Button onClick={handleMintFollowerNft}>Mint your follower NFT</Button>
-      )}
-      {isPaying ? (
-        <Button onClick={handleDeleteFlow}>
-          You are a paying user, click here to stop paying
-        </Button>
-      ) : (
-        <Button onClick={handleCreateFlow}>Pay user</Button>
-      )}
-    </Group>
-  );
 
   return loading ? (
     <Group direction="row">
@@ -150,8 +125,10 @@ export const UserProfile = observer(() => {
       <Text>@{params.userPubKey}</Text>
       {params.userPubKey === appStore.polygonAccount ? (
         <CreatePost />
+      ) : isFollowing ? (
+        <Button onClick={handleUnfollow}>Unfollow</Button>
       ) : (
-        <FollowButtons />
+        <Button onClick={handleFollow}>Follow</Button>
       )}
       <PostList posts={posts} />
     </Group>

@@ -11,40 +11,30 @@ const getSuperfluid = async ({ provider }) => {
 
 const createFlow = async ({ provider, receiver }) => {
   const { sf, signer } = await getSuperfluid({ provider });
-  try {
-    const createFlowOperation = sf.cfaV1.createFlow({
-      flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
-      receiver,
-      superToken: process.env.REACT_APP_USDCX_ADDRESS,
-      overrides: {
-        gasLimit: 300000,
-      },
-    });
-    const result = await createFlowOperation.exec(signer);
-    console.log(result);
-  } catch (error) {
-    console.log("Error while creating flow");
-    console.error(error);
-  }
+  const createFlowOperation = sf.cfaV1.createFlow({
+    flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
+  });
+  const result = await createFlowOperation.exec(signer);
+  console.log(result);
 };
 
 const updateFlow = async ({ provider, receiver }) => {
   const { sf, signer } = await getSuperfluid({ provider });
-  try {
-    const createFlowOperation = sf.cfaV1.updateFlow({
-      flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
-      receiver,
-      superToken: process.env.REACT_APP_USDCX_ADDRESS,
-      overrides: {
-        gasLimit: 300000,
-      },
-    });
-    const result = await createFlowOperation.exec(signer);
-    console.log(result);
-  } catch (error) {
-    console.log("Error while updating flow");
-    console.error(error);
-  }
+  const createFlowOperation = sf.cfaV1.updateFlow({
+    flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
+  });
+  const result = await createFlowOperation.exec(signer);
+  console.log(result);
 };
 
 export const createOrUpdateFlow = async ({ provider, sender, receiver }) => {
@@ -60,18 +50,14 @@ export const createOrUpdateFlow = async ({ provider, sender, receiver }) => {
 export const deleteFlow = async ({ provider, sender, receiver }) => {
   const { sf, signer } = await getSuperfluid({ provider });
 
-  try {
-    const deleteFlowOperation = sf.cfaV1.deleteFlow({
-      sender,
-      receiver,
-      superToken: process.env.REACT_APP_USDCX_ADDRESS,
-    });
-    console.log("Deleting your stream...");
-    const result = await deleteFlowOperation.exec(signer);
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
+  const deleteFlowOperation = sf.cfaV1.deleteFlow({
+    sender,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+  });
+  console.log("Deleting your stream...");
+  const result = await deleteFlowOperation.exec(signer);
+  console.log(result);
 };
 
 export const getFlow = async ({ provider, sender, receiver }) => {
