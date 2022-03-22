@@ -19,8 +19,6 @@ export const UserProfile = observer(() => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      setLoading(true);
-
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
         return;
@@ -29,7 +27,7 @@ export const UserProfile = observer(() => {
       if (!appStore.connectionStatus) {
         return;
       }
-
+      setLoading(true);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
 
       //Introduce try catch block to handle error rising out of url with invalid account addresses
@@ -61,6 +59,6 @@ export const UserProfile = observer(() => {
       <PostList posts={posts} />
     </Group>
   ) : (
-    <Text>User Not Found!</Text>
+    <Title order={1}>This user doesn't exist.</Title>
   );
 });
