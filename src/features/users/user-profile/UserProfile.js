@@ -94,18 +94,23 @@ export const UserProfile = observer(() => {
       follower: appStore.polygonAccount,
       followed: params.userPubKey,
     });
-    if (!userHasFollowerNft) {
-      await followUser({
+
+    try {
+      if (!userHasFollowerNft) {
+        await followUser({
+          provider,
+          account: appStore.polygonAccount,
+          user: params.userPubKey,
+        });
+      }
+      await createOrUpdateFlow({
         provider,
-        account: appStore.polygonAccount,
-        user: params.userPubKey,
+        sender: appStore.polygonAccount,
+        receiver: params.userPubKey,
       });
+    } catch (error) {
+      console.log("Some error happened while interacting with blockchain.");
     }
-    await createOrUpdateFlow({
-      provider,
-      sender: appStore.polygonAccount,
-      receiver: params.userPubKey,
-    });
 
     setIsFollowing(true);
     setFollowingInProcess(false);
@@ -115,11 +120,15 @@ export const UserProfile = observer(() => {
     setUnfollowingInProcess(true);
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await deleteFlow({
-      provider,
-      sender: appStore.polygonAccount,
-      receiver: params.userPubKey,
-    });
+    try {
+      await deleteFlow({
+        provider,
+        sender: appStore.polygonAccount,
+        receiver: params.userPubKey,
+      });
+    } catch (error) {
+      console.log("Some error happened while interacting with blockchain.");
+    }
 
     setIsFollowing(false);
     setUnfollowingInProcess(false);
