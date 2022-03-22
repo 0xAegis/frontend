@@ -5,40 +5,75 @@ const getSuperfluid = async ({ provider }) => {
     networkName: process.env.REACT_APP_NETWORK_NAME,
     provider: provider,
   });
-  const signer = sf.createSigner({ provider });
+  const signer = sf.createSigner({ web3Provider: provider });
   return { sf, signer };
 };
 
-export const createFlow = async ({ provider, recipient, flowRate }) => {
+const createFlow = async ({ provider, receiver }) => {
   const { sf, signer } = await getSuperfluid({ provider });
-
-  try {
-    const createFlowOperation = sf.cfaV1.createFlow({
-      flowRate: flowRate,
-      receiver: recipient,
-      superToken: process.env.REACT_APP_DAIX_ADDRESS,
-    });
-    console.log("Creating your stream...");
-    const result = await createFlowOperation.exec(signer);
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
+  const createFlowOperation = sf.cfaV1.createFlow({
+    flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
+  });
+  const txReceipt = await createFlowOperation.exec(signer);
+  await txReceipt.wait();
 };
 
-export const deleteFlow = async ({ provider, sender, recipient }) => {
+const updateFlow = async ({ provider, receiver }) => {
+  const { sf, signer } = await getSuperfluid({ provider });
+  const createFlowOperation = sf.cfaV1.updateFlow({
+    flowRate: process.env.REACT_APP_SUPERFLUID_FLOW_RATE,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
+  });
+  const txReceipt = await createFlowOperation.exec(signer);
+  await txReceipt.wait();
+};
+
+export const createOrUpdateFlow = async ({ provider, sender, receiver }) => {
+  const flow = await getFlow({ provider, sender, receiver });
+  console.log("Creating or updating the stream");
+  if (flow.flowRate === "0") {
+    await createFlow({ provider, receiver });
+  } else {
+    await updateFlow({ provider, receiver });
+  }
+  console.log("Done creating or updating the stream");
+};
+
+export const deleteFlow = async ({ provider, sender, receiver }) => {
   const { sf, signer } = await getSuperfluid({ provider });
 
-  try {
-    const deleteFlowOperation = sf.cfaV1.deleteFlow({
-      sender,
-      receiver: recipient,
-      superToken: process.env.REACT_APP_DAIX_ADDRESS,
-    });
-    console.log("Deleting your stream...");
-    const result = await deleteFlowOperation.exec(signer);
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
+  const deleteFlowOperation = sf.cfaV1.deleteFlow({
+    sender,
+    receiver,
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
+  });
+  console.log("Deleting your stream...");
+  const txReceipt = await deleteFlowOperation.exec(signer);
+  await txReceipt.wait();
+  console.log("Deleted the stream");
+};
+
+export const getFlow = async ({ provider, sender, receiver }) => {
+  const sf = await Framework.create({
+    networkName: process.env.REACT_APP_NETWORK_NAME,
+    provider: provider,
+  });
+  return await sf.cfaV1.getFlow({
+    superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    sender,
+    receiver,
+    providerOrSigner: provider,
+  });
 };
