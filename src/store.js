@@ -4,7 +4,7 @@ export class AppStore {
   constructor() {
     makeAutoObservable(this);
   }
-  user = {};
+  user = null;
   posts = [];
   arcanaAccount = {};
   polygonAccount = "";
