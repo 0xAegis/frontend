@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react";
-import { Button, Group, Text, TextInput } from "@mantine/core";
+import { Button, Group, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
 
@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 
 import { createUser, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
+import { getArcanaAuth, padPublicKey } from "../../../utils/arcana";
 
 export const CreateUser = observer(() => {
   const appStore = useContext(AppContext);
@@ -55,12 +56,24 @@ export const CreateUser = observer(() => {
     if (!appStore.connectionStatus) {
       return;
     }
+    if (!appStore.arcanaAccount.privateKey) {
+      return;
+    }
+
+    // Get Arcana public key of the connected user
+    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+    const publicKeyCoords = await arcanaAuth.getPublicKey({
+      verifier: appStore.arcanaAccount.loginType,
+      id: appStore.arcanaAccount.userInfo.id,
+    });
+    const arcanaPublicKey = padPublicKey(publicKeyCoords);
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const userInfo = await createUser({
       provider,
       account: appStore.polygonAccount,
       name: formValues.name,
+      arcanaPublicKey,
     });
     console.log(userInfo);
     // Update Mobx Store

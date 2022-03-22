@@ -22,6 +22,7 @@ const formatUserInfo = (userInfo) => {
     name: userInfo.name,
     publicKey: userInfo.publicKey,
     nftAddress: userInfo.nftAddress,
+    arcanaPublicKey: userInfo.arcanaPublicKey,
   };
 };
 
@@ -37,9 +38,14 @@ const formatPost = ({ post, creator }) => {
   };
 };
 
-export const createUser = async ({ provider, account, name }) => {
+export const createUser = async ({
+  provider,
+  account,
+  name,
+  arcanaPublicKey,
+}) => {
   const aegis = getAegis({ provider, account });
-  const createUserTx = await aegis.createUser(name);
+  const createUserTx = await aegis.createUser(name, arcanaPublicKey);
   await createUserTx.wait();
   return formatUserInfo(await aegis.users(account));
 };
