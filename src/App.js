@@ -1,16 +1,16 @@
 import { useEffect, useContext } from "react";
 
 import { observer } from "mobx-react-lite";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { ethers } from "ethers";
 
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
-
+import { getUser } from "./utils/aegis";
 const App = observer(() => {
   const appStore = useContext(AppContext);
-  let navigate = useNavigate();
-  let params = useParams();
+  // let navigate = useNavigate();
+  // let params = useParams();
 
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
@@ -39,14 +39,6 @@ const App = observer(() => {
     };
     checkConnectionStatus();
   });
-
-  //Navigate to connected user's profile page
-  //Don't navigate if url param has pubkey
-  useEffect(() => {
-    if (appStore.polygonAccount && !params.userPubKey) {
-      navigate("/user/" + appStore.polygonAccount);
-    }
-  }, [appStore.polygonAccount, navigate, params.userPubKey]);
 
   // Handle when chain (network) is changed
   useEffect(() => {
@@ -79,6 +71,33 @@ const App = observer(() => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
   });
+
+  // On page load, check whether user has an account in Aegis
+  useEffect(() => {
+    const checkAegisAccount = async () => {
+      if (!window.ethereum) {
+        console.log("Metamask is not installed.");
+        return;
+      }
+      //Checking If connection status is false
+      if (!appStore.connectionStatus) {
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        "any"
+      );
+      const userInfo = await getUser({
+        provider,
+        account: appStore.polygonAccount,
+      });
+      console.log(userInfo);
+      // Update Mobx Store
+      appStore.setUser(userInfo);
+    };
+
+    checkAegisAccount();
+  }, [appStore.checkConnectionStatus, appStore.polygonAccount, appStore]);
 
   return (
     <Navigation>
