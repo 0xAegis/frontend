@@ -108,11 +108,11 @@ export const UserProfile = observer(() => {
         sender: appStore.polygonAccount,
         receiver: params.userPubKey,
       });
+      setIsFollowing(true);
     } catch (error) {
       console.log("Some error happened while interacting with blockchain.");
     }
 
-    setIsFollowing(true);
     setFollowingInProcess(false);
   };
 
@@ -126,11 +126,11 @@ export const UserProfile = observer(() => {
         sender: appStore.polygonAccount,
         receiver: params.userPubKey,
       });
+      setIsFollowing(false);
     } catch (error) {
       console.log("Some error happened while interacting with blockchain.");
     }
 
-    setIsFollowing(false);
     setUnfollowingInProcess(false);
   };
 
