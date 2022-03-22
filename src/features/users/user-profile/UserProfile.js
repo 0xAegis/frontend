@@ -26,6 +26,9 @@ export const UserProfile = observer(() => {
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [followingInProcess, setFollowingInProcess] = useState(false);
+  const [unfollowingInProcess, setUnfollowingInProcess] = useState(false);
+
   const params = useParams();
 
   useEffect(() => {
@@ -83,6 +86,8 @@ export const UserProfile = observer(() => {
   ]);
 
   const handleFollow = async () => {
+    setFollowingInProcess(true);
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const userHasFollowerNft = await getUserHasFollowerNft({
       provider,
@@ -101,17 +106,23 @@ export const UserProfile = observer(() => {
       sender: appStore.polygonAccount,
       receiver: params.userPubKey,
     });
+
     setIsFollowing(true);
+    setFollowingInProcess(false);
   };
 
   const handleUnfollow = async () => {
+    setUnfollowingInProcess(true);
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await deleteFlow({
       provider,
       sender: appStore.polygonAccount,
       receiver: params.userPubKey,
     });
+
     setIsFollowing(false);
+    setUnfollowingInProcess(false);
   };
 
   return loading ? (
@@ -126,9 +137,13 @@ export const UserProfile = observer(() => {
       {params.userPubKey === appStore.polygonAccount ? (
         <CreatePost />
       ) : isFollowing ? (
-        <Button onClick={handleUnfollow}>Unfollow</Button>
+        <Button onClick={handleUnfollow} loading={unfollowingInProcess}>
+          Unfollow
+        </Button>
       ) : (
-        <Button onClick={handleFollow}>Follow</Button>
+        <Button onClick={handleFollow} loading={followingInProcess}>
+          Follow
+        </Button>
       )}
       <PostList posts={posts} />
     </Group>

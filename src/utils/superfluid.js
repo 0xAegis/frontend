@@ -19,8 +19,8 @@ const createFlow = async ({ provider, receiver }) => {
       gasLimit: 300000,
     },
   });
-  const result = await createFlowOperation.exec(signer);
-  console.log(result);
+  const txReceipt = await createFlowOperation.exec(signer);
+  await txReceipt.wait();
 };
 
 const updateFlow = async ({ provider, receiver }) => {
@@ -33,18 +33,19 @@ const updateFlow = async ({ provider, receiver }) => {
       gasLimit: 300000,
     },
   });
-  const result = await createFlowOperation.exec(signer);
-  console.log(result);
+  const txReceipt = await createFlowOperation.exec(signer);
+  await txReceipt.wait();
 };
 
 export const createOrUpdateFlow = async ({ provider, sender, receiver }) => {
   const flow = await getFlow({ provider, sender, receiver });
-  console.log(flow);
+  console.log("Creating or updating the stream");
   if (flow.flowRate === "0") {
     await createFlow({ provider, receiver });
   } else {
     await updateFlow({ provider, receiver });
   }
+  console.log("Done creating or updating the stream");
 };
 
 export const deleteFlow = async ({ provider, sender, receiver }) => {
@@ -54,10 +55,14 @@ export const deleteFlow = async ({ provider, sender, receiver }) => {
     sender,
     receiver,
     superToken: process.env.REACT_APP_USDCX_ADDRESS,
+    overrides: {
+      gasLimit: 300000,
+    },
   });
   console.log("Deleting your stream...");
-  const result = await deleteFlowOperation.exec(signer);
-  console.log(result);
+  const txReceipt = await deleteFlowOperation.exec(signer);
+  await txReceipt.wait();
+  console.log("Deleted the stream");
 };
 
 export const getFlow = async ({ provider, sender, receiver }) => {
