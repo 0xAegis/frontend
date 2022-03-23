@@ -1,4 +1,4 @@
-import { Framework, StreamQueryHandler } from "@superfluid-finance/sdk-core";
+import { Framework } from "@superfluid-finance/sdk-core";
 
 const getSuperfluid = async ({ provider }) => {
   const sf = await Framework.create({
@@ -83,18 +83,18 @@ export const getSenders = async ({ provider, receiver }) => {
     networkName: process.env.REACT_APP_NETWORK_NAME,
     provider: provider,
   });
+  // Get all streams that are pouring USDCx into receiver
   const streams = await sf.query.listStreams({
     receiver,
     token: process.env.REACT_APP_USDCX_ADDRESS,
   });
-  console.log(streams);
+  // Filter the streams having flowRate more than Aegis flowRate
   const nonZeroFlowRates = streams.data.filter(
     (stream) =>
       parseInt(stream.currentFlowRate) >=
       parseInt(process.env.REACT_APP_SUPERFLUID_FLOW_RATE)
   );
-  console.log(nonZeroFlowRates);
+  // Get the senders of those flows
   const senders = nonZeroFlowRates.map((flow) => flow.sender);
-  console.log(senders);
   return senders;
 };
