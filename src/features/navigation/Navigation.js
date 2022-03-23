@@ -6,7 +6,7 @@ import {
   Header,
   MediaQuery,
   Navbar,
-  Text,
+  Title,
   useMantineTheme,
 } from "@mantine/core";
 
@@ -73,7 +73,9 @@ const Navigation = observer(({ children }) => {
               />
             </MediaQuery>
 
-            <Text size="lg">Aegis</Text>
+            <Title pl={65} order={1}>
+              Aegis
+            </Title>
           </div>
         </Header>
       }
