@@ -3,6 +3,7 @@ import { useEffect, useContext } from "react";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 import { ethers } from "ethers";
+import { Container } from "@mantine/core";
 
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
@@ -143,9 +144,11 @@ const App = observer(() => {
   }, [appStore.user, appStore.polygonAccount, appStore]);
 
   return (
-    <Navigation>
-      <Outlet />
-    </Navigation>
+    <Container size="md">
+      <Navigation>
+        <Outlet />
+      </Navigation>
+    </Container>
   );
 });
 
