@@ -19,7 +19,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route path="/create_account" element={<CreateUser />} />
+            <Route path="/create-account" element={<CreateUser />} />
             <Route path="user">
               <Route path=":userPubKey" element={<UserProfile />} />
             </Route>
