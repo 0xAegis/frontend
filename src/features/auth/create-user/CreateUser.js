@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Button, Group, TextInput, Box } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
@@ -7,8 +7,10 @@ import { observer } from "mobx-react-lite";
 
 import { createUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
+import { getArcanaAuth, padPublicKey } from "../../../utils/arcana";
 
 export const CreateUser = observer(() => {
+  const [creatingUser, setCreatingUser] = useState(false);
   const appStore = useContext(AppContext);
   const form = useForm({
     // The fields in the form
@@ -28,16 +30,36 @@ export const CreateUser = observer(() => {
     if (!appStore.connectionStatus) {
       return;
     }
+    if (!appStore.arcanaAccount.privateKey) {
+      return;
+    }
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const userInfo = await createUser({
-      provider,
-      account: appStore.polygonAccount,
-      name: formValues.name,
-    });
-    console.log(userInfo);
-    // Update Mobx Store
-    appStore.setUser(userInfo);
+    setCreatingUser(true);
+
+    try {
+      // Get Arcana public key of the connected user
+      const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+      const publicKeyCoords = await arcanaAuth.getPublicKey({
+        verifier: appStore.arcanaAccount.loginType,
+        id: appStore.arcanaAccount.userInfo.id,
+      });
+      const arcanaPublicKey = padPublicKey(publicKeyCoords);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const userInfo = await createUser({
+        provider,
+        account: appStore.polygonAccount,
+        name: formValues.name,
+        arcanaPublicKey,
+      });
+      console.log(userInfo);
+      // Update Mobx Store
+      appStore.setUser(userInfo);
+    } catch (error) {
+      console.log("Some error happened while creating user.");
+    }
+
+    setCreatingUser(false);
   };
 
   return (
@@ -50,7 +72,7 @@ export const CreateUser = observer(() => {
       <form onSubmit={form.onSubmit(handleFormSubmit)}>
         <Group direction="column" position="center" grow={true}>
           <TextInput required {...form.getInputProps("name")} />
-          <Button position="right" type="submit">
+          <Button position="right" type="submit" loading={creatingUser}>
             Create Account
           </Button>
         </Group>
