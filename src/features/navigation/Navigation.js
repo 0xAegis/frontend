@@ -30,7 +30,8 @@ const Navigation = observer(({ children }) => {
           p="md"
           hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 200, lg: 250 }}
+          width={{ sm: 250 }}
+          style={{ width: 250 }}
         >
           <Navbar.Section pb={20}>
             <Link className={styles.nav_link} to={"/"}>
@@ -72,10 +73,12 @@ const Navigation = observer(({ children }) => {
                 mr="xl"
               />
             </MediaQuery>
-
-            <Title pl={65} order={1}>
-              Aegis
-            </Title>
+            <MediaQuery
+              largerThan={"sm"}
+              styles={{ display: "flex", paddingLeft: "65px" }}
+            >
+              <Title order={1}>Aegis</Title>
+            </MediaQuery>
           </div>
         </Header>
       }
