@@ -1,11 +1,12 @@
 import { Card, Text, Badge, Group, useMantineTheme } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 export const Post = ({ text, attachments, isPaid }) => {
-  // return <Text>{text}</Text>;
   const theme = useMantineTheme();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div style={{ width: 500, margin: "auto" }}>
+    <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
       <Card shadow="sm" p="lg">
         <Text>{text}</Text>
         <Group
