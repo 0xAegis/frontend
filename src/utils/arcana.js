@@ -1,6 +1,10 @@
 import { AuthProvider } from "@arcana/auth";
 import { StorageProvider } from "@arcana/storage";
 
+export const padPublicKey = (publicKey) => {
+  return "0x04" + publicKey.X.padStart(64, "0") + publicKey.Y.padStart(64, "0");
+};
+
 // Util function for getting arcana auth object
 export const getArcanaAuth = ({ baseUrl }) => {
   const redirectUri = new URL("oauth-redirect/google", baseUrl).href;

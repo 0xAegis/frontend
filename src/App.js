@@ -86,13 +86,16 @@ const App = observer(() => {
         window.ethereum,
         "any"
       );
-      const userInfo = await getUser({
-        provider,
-        account: appStore.polygonAccount,
-      });
-      console.log(userInfo);
-      // Update Mobx Store
-      appStore.setUser(userInfo);
+      try {
+        const userInfo = await getUser({
+          provider,
+          account: appStore.polygonAccount,
+        });
+        // Update Mobx Store
+        appStore.setUser(userInfo);
+      } catch (error) {
+        console.log("Error while fetching Aegis user");
+      }
     };
 
     checkAegisAccount();
