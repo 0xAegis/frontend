@@ -6,7 +6,8 @@ import { ethers } from "ethers";
 
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
-import { getUser } from "./utils/aegis";
+import { getFollowerNftCount, getNumNftsMinted, getUser } from "./utils/aegis";
+import { getSenders } from "./utils/superfluid";
 
 const App = observer(() => {
   const appStore = useContext(AppContext);
@@ -94,12 +95,52 @@ const App = observer(() => {
         // Update Mobx Store
         appStore.setUser(userInfo);
       } catch (error) {
-        console.log("Error while fetching Aegis user");
+        console.log("Error while fetching Aegis user:", error);
       }
     };
 
     checkAegisAccount();
   }, [appStore.checkConnectionStatus, appStore.polygonAccount, appStore]);
+
+  useEffect(() => {
+    const checkFollowers = async () => {
+      if (!appStore.user) {
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      // get all the money senders
+      const moneySenders = await getSenders({
+        provider,
+        receiver: appStore.polygonAccount,
+      });
+      // also get whether they hold a follower NFT or not
+      const senderIsFollower = await Promise.all(
+        moneySenders.map(async (sender) => [
+          sender,
+          (await getFollowerNftCount({
+            provider,
+            follower: sender,
+            followedUser: appStore.user,
+          })) > 0,
+        ])
+      );
+      // Filter the ones which returned true in last step, we did it in 2 steps because filter doesn't support async funcs
+      const payingFollowers = senderIsFollower
+        .filter(([sender, senderIsFollower]) => senderIsFollower)
+        .map(([sender, senderIsFollower]) => sender);
+      // Get total follower nfts minted for the user
+      const numNftsMinted = await getNumNftsMinted({
+        provider,
+        nftAddress: appStore.user.nftAddress,
+      });
+
+      console.log(numNftsMinted, payingFollowers);
+      appStore.setPayingFollowers(payingFollowers);
+      appStore.setNumFollowerNftsMinted(numNftsMinted);
+    };
+
+    checkFollowers();
+  }, [appStore.user, appStore.polygonAccount, appStore]);
 
   return (
     <Navigation>

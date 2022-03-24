@@ -87,7 +87,6 @@ export const getPostsOfUser = async ({ provider, account }) => {
   const formattedPosts = posts.map((post) =>
     formatPost({ post, creator: account })
   );
-  console.log(formattedPosts);
   return formattedPosts;
 };
 
@@ -97,17 +96,23 @@ export const followUser = async ({ provider, account, user }) => {
   await followUserTx.wait();
 };
 
-export const getFollowerNftCount = async ({ provider, follower, followed }) => {
-  const followedUser = await getUser({ provider, account: followed });
-  if (!followedUser) {
-    return;
-  }
+export const getFollowerNftCount = async ({
+  provider,
+  follower,
+  followedUser,
+}) => {
   const aegisFollowers = new Contract(
     followedUser.nftAddress,
     aegisFollowersABI,
     provider
   );
-  return (await aegisFollowers.balanceOf(follower)).toNumber();
+  const count = (await aegisFollowers.balanceOf(follower)).toNumber();
+  return count;
+};
+
+export const getNumNftsMinted = async ({ provider, nftAddress }) => {
+  const aegisFollowers = new Contract(nftAddress, aegisFollowersABI, provider);
+  return (await aegisFollowers.totalSupply()).toNumber();
 };
 
 export const getUserHasFollowerNft = async ({

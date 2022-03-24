@@ -18,6 +18,7 @@ import {
   createOrUpdateFlow,
   deleteFlow,
   getFlow,
+  getSenders,
 } from "../../../utils/superfluid";
 
 export const UserProfile = observer(() => {
@@ -70,6 +71,7 @@ export const UserProfile = observer(() => {
         setUser(user);
         setPosts(posts);
         setIsFollowing(isFollowing);
+        await getSenders({ provider, receiver: params.userPubKey });
       } catch {
         console.log("error: check url for invalid account addresss");
       }
