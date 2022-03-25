@@ -144,7 +144,7 @@ export const UserProfile = observer(() => {
   ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
-      <Text>@{params.userPubKey}</Text>
+      <Text style={{ overflowWrap: "anywhere" }}>@{params.userPubKey}</Text>
       {params.userPubKey === appStore.polygonAccount ? (
         <CreatePost />
       ) : isFollowing ? (

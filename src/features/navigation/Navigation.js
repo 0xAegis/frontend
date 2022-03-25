@@ -6,7 +6,7 @@ import {
   Header,
   MediaQuery,
   Navbar,
-  Text,
+  Title,
   useMantineTheme,
 } from "@mantine/core";
 
@@ -30,23 +30,23 @@ const Navigation = observer(({ children }) => {
           p="md"
           hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 200, lg: 250 }}
+          width={{ sm: 250 }}
+          style={{ width: 250 }}
         >
-          <Navbar.Section p={10}>
+          <Navbar.Section pb={20}>
             <Link className={styles.nav_link} to={"/"}>
               Home
             </Link>
           </Navbar.Section>
-          <Navbar.Section p={20}>
+          <Navbar.Section>
             {appStore.user == null ? (
-              <Link className={styles.nav_link} to={"/create-account"} p={10}>
+              <Link className={styles.nav_link} to={"/create-account"}>
                 Create Account
               </Link>
             ) : (
               <Link
                 className={styles.nav_link}
                 to={"/user/" + appStore.user.publicKey}
-                pb={10}
               >
                 Profile
               </Link>
@@ -73,8 +73,12 @@ const Navigation = observer(({ children }) => {
                 mr="xl"
               />
             </MediaQuery>
-
-            <Text size="lg">Aegis</Text>
+            <MediaQuery
+              largerThan={"sm"}
+              styles={{ display: "flex", paddingLeft: "65px" }}
+            >
+              <Title order={1}>Aegis</Title>
+            </MediaQuery>
           </div>
         </Header>
       }

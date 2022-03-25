@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
 import { ethers } from "ethers";
@@ -11,6 +12,7 @@ import { AppContext } from "../../..";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = observer(() => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const appStore = useContext(AppContext);
   //Keeping track of character count while writing post
   const [postContent, setPostContent] = useState("");
@@ -73,7 +75,10 @@ export const CreatePost = observer(() => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleFormSubmit)}>
+    <form
+      style={isMobile ? { width: "70vw" } : { width: 500 }}
+      onSubmit={form.onSubmit(handleFormSubmit)}
+    >
       <Group direction="column" position="center" grow={true}>
         <Textarea
           onKeyUp={TextInputLimitCheck}
@@ -90,7 +95,6 @@ export const CreatePost = observer(() => {
               : null
           }
         />
-
         <Dropzone onDrop={handleDropzoneDrop} multiple={true}>
           {() => <Text>Drag image here or click to select file</Text>}
         </Dropzone>
