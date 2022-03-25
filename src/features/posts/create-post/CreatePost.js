@@ -57,6 +57,13 @@ export const CreatePost = observer(() => {
       )
     );
     console.log("Attachments DIDs:", fileDids);
+    const access = await arcanaStorage.getAccess();
+    const shared = await access.share(
+      fileDids,
+      appStore.payingFollowers,
+      new Array(appStore.payingFollowers.length).fill(1000000000)
+    );
+    console.log(shared);
     const post = await createPost({
       provider,
       account: appStore.polygonAccount,
