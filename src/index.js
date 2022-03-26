@@ -8,6 +8,7 @@ import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
 import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
+import { FollowedPage } from "./features/users/followed-page/FollowedPage";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
 
 export const AppContext = createContext();
@@ -21,6 +22,7 @@ ReactDOM.render(
           <Route path="/" element={<App />}>
             <Route path="/create-account" element={<CreateUser />} />
             <Route path="user">
+              <Route path=":userPubKey/followed" element={<FollowedPage />} />
               <Route path=":userPubKey" element={<UserProfile />} />
             </Route>
           </Route>

@@ -38,7 +38,7 @@ const Navigation = observer(({ children }) => {
               Home
             </Link>
           </Navbar.Section>
-          <Navbar.Section>
+          <Navbar.Section pb={20}>
             {appStore.user == null ? (
               <Link className={styles.nav_link} to={"/create-account"}>
                 Create Account
@@ -49,6 +49,16 @@ const Navigation = observer(({ children }) => {
                 to={"/user/" + appStore.user.publicKey}
               >
                 Profile
+              </Link>
+            )}
+          </Navbar.Section>
+          <Navbar.Section>
+            {appStore.user == null ? null : (
+              <Link
+                className={styles.nav_link}
+                to={"/user/" + appStore.user.publicKey + "/followed"}
+              >
+                Followed
               </Link>
             )}
           </Navbar.Section>

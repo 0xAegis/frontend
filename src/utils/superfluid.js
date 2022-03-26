@@ -98,3 +98,24 @@ export const getSenders = async ({ provider, receiver }) => {
   const senders = nonZeroFlowRates.map((flow) => flow.sender);
   return senders;
 };
+
+export const getReceivers = async ({ provider, sender }) => {
+  const sf = await Framework.create({
+    networkName: process.env.REACT_APP_NETWORK_NAME,
+    provider: provider,
+  });
+  // Get all streams that are sending USDCx out
+  const streams = await sf.query.listStreams({
+    sender,
+    token: process.env.REACT_APP_USDCX_ADDRESS,
+  });
+  // Filter the streams having flowRate more than Aegis flowRate
+  const nonZeroFlowRates = streams.data.filter(
+    (stream) =>
+      parseInt(stream.currentFlowRate) >=
+      parseInt(process.env.REACT_APP_SUPERFLUID_FLOW_RATE)
+  );
+  // Get the receivers of those flows
+  const receivers = nonZeroFlowRates.map((flow) => flow.receiver);
+  return receivers;
+};
