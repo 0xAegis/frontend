@@ -5,7 +5,7 @@ import { Group, Text, Title, Loader, Button, Card } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
-import { getUserHasFollowerNft } from "../../../utils/aegis";
+import { getUserHasFollowerNft, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
 import { getReceivers } from "../../../utils/superfluid";
 
@@ -13,6 +13,7 @@ export const FollowedPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [followedUsers, setFollowedUsers] = useState(null);
+  const [followedUsersNames, setFollowedUsersNames] = useState(null);
 
   const params = useParams();
 
@@ -61,15 +62,41 @@ export const FollowedPage = observer(() => {
     fetchFollowedUsers();
   }, [params.userPubKey, appStore.connectionStatus]);
 
+  useEffect(() => {
+    const getUserNames = async () => {
+      if (!window.ethereum) {
+        console.log("Metamask is not installed.");
+        return;
+      }
+      //Checking If connection status is false
+      if (!appStore.connectionStatus) {
+        return;
+      }
+      //Checking If connection status is false
+      if (followedUsers === null) {
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      let allNames = [];
+      for (const followedUser of followedUsers) {
+        const user = await getUser({ provider, account: followedUser });
+        allNames.push(user.name);
+      }
+      setFollowedUsersNames(allNames);
+    };
+    getUserNames();
+  }, [appStore.connectionStatus, followedUsers]);
+
   return loading ? (
     <Group direction="row">
       <Text size="xl">Loading...</Text>
       <Loader />
     </Group>
-  ) : followedUsers !== null ? (
+  ) : followedUsers !== null && followedUsersNames !== null ? (
     <Group direction="column">
       {followedUsers.map((followedUser, index) => (
         <Card shadow="sm" p="lg" key={index}>
+          <Text size="xl">{followedUsersNames[index]}</Text>
           <Text>{followedUser}</Text>
           <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
             <Link to={"/user/" + followedUser}>

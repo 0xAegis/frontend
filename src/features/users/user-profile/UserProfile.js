@@ -137,10 +137,7 @@ export const UserProfile = observer(() => {
   };
 
   return loading ? (
-    <Group direction="row">
-      <Text size="xl">Loading...</Text>
-      <Loader />
-    </Group>
+    <Loader />
   ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
