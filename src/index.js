@@ -10,6 +10,7 @@ import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
 import { FollowedPage } from "./features/users/followed-page/FollowedPage";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
+import { Home } from "./features/users/home-page/Home";
 
 export const AppContext = createContext();
 const appStore = new AppStore();
@@ -19,12 +20,13 @@ ReactDOM.render(
     <AppContext.Provider value={appStore}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />}>
+          <Route element={<App />}>
             <Route path="/create-account" element={<CreateUser />} />
             <Route path="user">
               <Route path=":userPubKey/followed" element={<FollowedPage />} />
               <Route path=":userPubKey" element={<UserProfile />} />
             </Route>
+            <Route path="/" element={<Home />}></Route>
           </Route>
           <Route
             path="/oauth-redirect/google"
