@@ -30,7 +30,7 @@ export const CreateUser = observer(() => {
     if (!appStore.connectionStatus) {
       return;
     }
-    if (!appStore.arcanaAccount.privateKey) {
+    if (!appStore.arcanaAccount) {
       return;
     }
 

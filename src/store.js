@@ -6,7 +6,7 @@ export class AppStore {
   }
   user = null;
   posts = [];
-  arcanaAccount = {};
+  arcanaAccount = null;
   polygonAccount = "";
   chainIsValid = false;
   numFollowerNftsMinted = 0;
