@@ -23,6 +23,7 @@ const formatUserInfo = (userInfo) => {
     name: userInfo.name,
     publicKey: userInfo.publicKey,
     nftAddress: userInfo.nftAddress,
+    arcanaPublicKey: userInfo.arcanaPublicKey,
   };
 };
 
@@ -38,9 +39,14 @@ const formatPost = ({ post, creator }) => {
   };
 };
 
-export const createUser = async ({ provider, account, name }) => {
+export const createUser = async ({
+  provider,
+  account,
+  name,
+  arcanaPublicKey,
+}) => {
   const aegis = getAegis({ provider, account });
-  const createUserTx = await aegis.createUser(name);
+  const createUserTx = await aegis.createUser(name, arcanaPublicKey);
   await createUserTx.wait();
   return formatUserInfo(await aegis.users(account));
 };
@@ -81,7 +87,6 @@ export const getPostsOfUser = async ({ provider, account }) => {
   const formattedPosts = posts.map((post) =>
     formatPost({ post, creator: account })
   );
-  console.log(formattedPosts);
   return formattedPosts;
 };
 
@@ -91,17 +96,23 @@ export const followUser = async ({ provider, account, user }) => {
   await followUserTx.wait();
 };
 
-export const getFollowerNftCount = async ({ provider, follower, followed }) => {
-  const followedUser = await getUser({ provider, account: followed });
-  if (!followedUser) {
-    return;
-  }
+export const getFollowerNftCount = async ({
+  provider,
+  follower,
+  followedUser,
+}) => {
   const aegisFollowers = new Contract(
     followedUser.nftAddress,
     aegisFollowersABI,
     provider
   );
-  return (await aegisFollowers.balanceOf(follower)).toNumber();
+  const count = (await aegisFollowers.balanceOf(follower)).toNumber();
+  return count;
+};
+
+export const getNumNftsMinted = async ({ provider, nftAddress }) => {
+  const aegisFollowers = new Contract(nftAddress, aegisFollowersABI, provider);
+  return (await aegisFollowers.totalSupply()).toNumber();
 };
 
 export const getUserHasFollowerNft = async ({

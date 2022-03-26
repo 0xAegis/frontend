@@ -34,7 +34,7 @@ const ConnectArcana = observer(() => {
 
   return (
     <Container fluid>
-      {appStore.arcanaAccount.userInfo ? (
+      {appStore.arcanaAccount ? (
         <Text>
           Connected to Arcana: {appStore.arcanaAccount.userInfo.email}
         </Text>

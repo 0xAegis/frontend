@@ -18,6 +18,7 @@ import {
   createOrUpdateFlow,
   deleteFlow,
   getFlow,
+  getSenders,
 } from "../../../utils/superfluid";
 
 export const UserProfile = observer(() => {
@@ -70,6 +71,7 @@ export const UserProfile = observer(() => {
         setUser(user);
         setPosts(posts);
         setIsFollowing(isFollowing);
+        await getSenders({ provider, receiver: params.userPubKey });
       } catch {
         console.log("error: check url for invalid account addresss");
       }
@@ -135,14 +137,11 @@ export const UserProfile = observer(() => {
   };
 
   return loading ? (
-    <Group direction="row">
-      <Text size="xl">Loading...</Text>
-      <Loader />
-    </Group>
+    <Loader />
   ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>
-      <Text>@{params.userPubKey}</Text>
+      <Text style={{ overflowWrap: "anywhere" }}>@{params.userPubKey}</Text>
       {params.userPubKey === appStore.polygonAccount ? (
         <CreatePost />
       ) : isFollowing ? (

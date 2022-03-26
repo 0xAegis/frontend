@@ -6,9 +6,11 @@ export class AppStore {
   }
   user = null;
   posts = [];
-  arcanaAccount = {};
+  arcanaAccount = null;
   polygonAccount = "";
   chainIsValid = false;
+  numFollowerNftsMinted = 0;
+  payingFollowers = [];
 
   setUser(user) {
     this.user = user;
@@ -36,5 +38,13 @@ export class AppStore {
       return true;
     }
     return false;
+  }
+
+  setNumFollowerNftsMinted(numFollowerNftsMinted) {
+    this.numFollowerNftsMinted = numFollowerNftsMinted;
+  }
+
+  setPayingFollowers(payingFollowers) {
+    this.payingFollowers = payingFollowers;
   }
 }
