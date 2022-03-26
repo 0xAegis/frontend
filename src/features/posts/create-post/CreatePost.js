@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Button, Checkbox, Group, Text, Textarea } from "@mantine/core";
+import { Button, Group, List, ListItem, Text, Textarea } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
@@ -9,9 +9,11 @@ import { observer } from "mobx-react-lite";
 import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
 import { createPost } from "../../../utils/aegis";
 import { AppContext } from "../../..";
+import { useNotifications } from "@mantine/notifications";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = observer(() => {
+  const notifications = useNotifications();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const appStore = useContext(AppContext);
   //Keeping track of character count while writing post
@@ -26,7 +28,7 @@ export const CreatePost = observer(() => {
     initialValues: {
       text: "",
       attachments: [],
-      isPaid: false,
+      isPaid: true,
     },
   });
 
@@ -41,22 +43,39 @@ export const CreatePost = observer(() => {
     if (!appStore.connectionStatus) {
       return;
     }
+
+    let fileDids = [];
+
+    // If there are attachments, upload them to Arcana
+    if (formValues.attachments.length) {
+      if (!appStore.arcanaAccount) {
+        notifications.showNotification({
+          title: "Connect to Arcana",
+          message:
+            "You need to connect to Arcana before you can make posts with attachments",
+          color: "teal",
+        });
+        return;
+      }
+      // Upload the files to Arcana
+      const arcanaStorage = getArcanaStorage({
+        privateKey: appStore.arcanaAccount.privateKey,
+        email: appStore.arcanaAccount.userInfo.email,
+      });
+      const fileDids = await Promise.all(
+        formValues.attachments.map(
+          async (file) =>
+            await uploadToArcana({
+              arcanaStorage,
+              file: file,
+            })
+        )
+      );
+      console.log("Attachments DIDs:", fileDids);
+    }
+
+    // Create the post on-chain
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // Upload the files to Arcana
-    const arcanaStorage = getArcanaStorage({
-      privateKey: appStore.arcanaAccount.privateKey,
-      email: appStore.arcanaAccount.userInfo.email,
-    });
-    const fileDids = await Promise.all(
-      formValues.attachments.map(
-        async (file) =>
-          await uploadToArcana({
-            arcanaStorage,
-            file: file,
-          })
-      )
-    );
-    console.log("Attachments DIDs:", fileDids);
     const post = await createPost({
       provider,
       account: appStore.polygonAccount,
@@ -96,12 +115,22 @@ export const CreatePost = observer(() => {
           }
         />
         <Dropzone onDrop={handleDropzoneDrop} multiple={true}>
-          {() => <Text>Drag image here or click to select file</Text>}
+          {() => (
+            <Group direction="column">
+              <Text>Drag files here or click to select files</Text>
+              {form.values.attachments.length ? (
+                <Group direction="column">
+                  <Text>Selected Files</Text>
+                  <List>
+                    {form.values.attachments.map((file) => (
+                      <ListItem>{file.name}</ListItem>
+                    ))}
+                  </List>
+                </Group>
+              ) : null}
+            </Group>
+          )}
         </Dropzone>
-        <Checkbox
-          label="Is this a paid post?"
-          {...form.getInputProps("isPaid")}
-        />
         <Button position="right" type="submit">
           Post
         </Button>
