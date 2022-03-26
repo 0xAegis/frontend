@@ -58,12 +58,8 @@ const App = observer(() => {
   // Handle when main account is changed
   useEffect(() => {
     const handleAccountsChanged = (accounts) => {
-      if (accounts.length === 0) {
-        // MetaMask is locked or the user has not connected any accounts
-        console.log("Please connect to MetaMask.");
-      } else if (accounts[0] !== appStore.polygonAccount) {
-        appStore.setPolygonAccount(accounts[0]);
-      }
+      // It is recommended to reload the page
+      window.location.reload();
     };
     window.ethereum.on("accountsChanged", handleAccountsChanged);
 
