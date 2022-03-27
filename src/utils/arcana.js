@@ -6,19 +6,12 @@ export const padPublicKey = (publicKey) => {
 };
 
 // Util function for getting arcana auth object
-export const getArcanaAuth = ({ baseUrl }) => {
+export const getArcanaAuth = async ({ baseUrl }) => {
   const redirectUri = new URL("oauth-redirect/google", baseUrl).href;
-  return new AuthProvider({
+  return await AuthProvider.init({
     appID: process.env.REACT_APP_ARCANA_APP_ID,
-    network: "testnet",
-    oauthCreds: [
-      {
-        type: "google",
-        clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-      },
-    ],
-    flow: "popup",
     redirectUri,
+    flow: "popup",
   });
 };
 

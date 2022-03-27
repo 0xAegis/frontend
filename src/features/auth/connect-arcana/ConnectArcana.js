@@ -11,20 +11,25 @@ const ConnectArcana = observer(() => {
   const appStore = useContext(AppContext);
   // Check if user is logged in to Arcana
   useEffect(() => {
-    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+    const checkArcana = async () => {
+      const arcanaAuth = await getArcanaAuth({
+        baseUrl: window.location.origin,
+      });
 
-    if (arcanaAuth.isLoggedIn()) {
-      const userInfo = arcanaAuth.getUserInfo();
-      // Update Mobx Store
-      appStore.setArcanaAccount(userInfo);
-    }
+      if (arcanaAuth.isLoggedIn()) {
+        const userInfo = arcanaAuth.getUserInfo();
+        // Update Mobx Store
+        appStore.setArcanaAccount(userInfo);
+      }
+    };
+    checkArcana();
   }, [appStore]);
 
   // Connect to Arcana using social auth
   const connectArcana = async () => {
-    const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+    const arcanaAuth = await getArcanaAuth({ baseUrl: window.location.origin });
 
-    await arcanaAuth.loginWithSocial(SocialLoginType.google);
+    await arcanaAuth.loginWithSocial(SocialLoginType.github);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
       // Update Mobx Store
