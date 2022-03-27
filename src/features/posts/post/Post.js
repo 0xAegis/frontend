@@ -1,4 +1,5 @@
 import { useEffect, useContext, useState } from "react";
+
 import { ethers } from "ethers";
 import { Link } from "react-router-dom";
 import {
@@ -10,6 +11,8 @@ import {
   Button,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { useNotifications } from "@mantine/notifications";
+
 import { AppContext } from "../../..";
 import { getUser } from "../../../utils/aegis";
 import { getArcanaStorage, downloadFromArcana } from "../../../utils/arcana";
@@ -17,6 +20,7 @@ import styles from "./Post.module.css";
 
 export const Post = ({ user, text, attachments, isPaid }) => {
   const appStore = useContext(AppContext);
+  const notifications = useNotifications();
   const [userName, setUserName] = useState(null);
   useEffect(() => {
     console.log(attachments);
@@ -40,6 +44,16 @@ export const Post = ({ user, text, attachments, isPaid }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleAttachmentDownload = async () => {
+    if (!appStore.arcanaAccount) {
+      notifications.showNotification({
+        title: "Connect to Arcana",
+        message:
+          "You need to connect to Arcana before you can download attachments",
+        color: "teal",
+      });
+      return;
+    }
+
     // Download the files from Arcana
     const arcanaStorage = getArcanaStorage({
       privateKey: appStore.arcanaAccount.privateKey,
