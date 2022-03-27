@@ -8,19 +8,19 @@ import { observer } from "mobx-react-lite";
 
 import { getUserHasFollowerNft, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
-import { getReceivers } from "../../../utils/superfluid";
+import { getSenders } from "../../../utils/superfluid";
 
-export const FollowedPage = observer(() => {
+export const FollowersPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
-  const [followedUsers, setFollowedUsers] = useState(null);
-  const [followedUsersNames, setFollowedUsersNames] = useState(null);
+  const [followers, setFollowers] = useState(null);
+  const [followersNames, setFollowersNames] = useState(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const params = useParams();
 
   useEffect(() => {
-    const fetchFollowedUsers = async () => {
+    const fetchFollowers = async () => {
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
         return;
@@ -33,26 +33,26 @@ export const FollowedPage = observer(() => {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       try {
-        const receivers = await getReceivers({
+        const senders = await getSenders({
           provider,
-          sender: params.userPubKey,
+          receiver: params.userPubKey,
         });
         const results = await Promise.all(
-          receivers.map((receiver) => {
+          senders.map((sender) => {
             return getUserHasFollowerNft({
               provider,
-              follower: params.userPubKey,
-              followed: receiver,
+              follower: sender,
+              followed: params.userPubKey,
             });
           })
         );
-        let filteredReceivers = [];
+        let filteredSenders = [];
         results.forEach((result, index) => {
-          if (result) filteredReceivers.push(receivers[index]);
+          if (result) filteredSenders.push(senders[index]);
         });
 
-        if (filteredReceivers.length !== 0) {
-          setFollowedUsers(filteredReceivers);
+        if (filteredSenders.length !== 0) {
+          setFollowers(filteredSenders);
         }
       } catch (err) {
         console.log("error :", err);
@@ -61,7 +61,7 @@ export const FollowedPage = observer(() => {
       setLoading(false);
     };
 
-    fetchFollowedUsers();
+    fetchFollowers();
   }, [params.userPubKey, appStore.connectionStatus]);
 
   useEffect(() => {
@@ -75,39 +75,39 @@ export const FollowedPage = observer(() => {
         return;
       }
       //Checking If connection status is false
-      if (followedUsers === null) {
+      if (followers === null) {
         return;
       }
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       let allNames = [];
-      for (const followedUser of followedUsers) {
-        const user = await getUser({ provider, account: followedUser });
+      for (const follower of followers) {
+        const user = await getUser({ provider, account: follower });
         allNames.push(user.name);
       }
-      setFollowedUsersNames(allNames);
+      setFollowersNames(allNames);
     };
     getUserNames();
-  }, [appStore.connectionStatus, followedUsers]);
+  }, [appStore.connectionStatus, followers]);
 
   return loading ? (
     <Group direction="row">
       <Text size="xl">Loading...</Text>
       <Loader />
     </Group>
-  ) : followedUsers !== null && followedUsersNames !== null ? (
+  ) : followers !== null && followersNames !== null ? (
     <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
       <Group direction="column">
-        {followedUsers.map((followedUser, index) => (
+        {followers.map((follower, index) => (
           <Card
             shadow="sm"
             p="lg"
             key={index}
             style={{ overflowWrap: "anywhere" }}
           >
-            <Text size="xl">{followedUsersNames[index]}</Text>
-            <Text>{followedUser}</Text>
+            <Text size="xl">{followersNames[index]}</Text>
+            <Text>{follower}</Text>
             <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
-              <Link to={"/user/" + followedUser}>
+              <Link to={"/user/" + follower}>
                 <Button>View Profile</Button>
               </Link>
             </Group>
@@ -116,6 +116,6 @@ export const FollowedPage = observer(() => {
       </Group>
     </div>
   ) : (
-    <Title order={2}>No followed users.</Title>
+    <Title order={2}>No followers yet.</Title>
   );
 });

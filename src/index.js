@@ -12,6 +12,7 @@ import { UserProfile } from "./features/users/user-profile/UserProfile";
 import { FollowedPage } from "./features/users/followed-page/FollowedPage";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
 import { Home } from "./features/users/home-page/Home";
+import { FollowersPage } from "./features/users/followers-page/FollowersPage";
 
 export const AppContext = createContext();
 const appStore = new AppStore();
@@ -25,6 +26,10 @@ ReactDOM.render(
             <Route element={<App />}>
               <Route path="/create-account" element={<CreateUser />} />
               <Route path="user">
+                <Route
+                  path=":userPubKey/followers"
+                  element={<FollowersPage />}
+                />
                 <Route path=":userPubKey/followed" element={<FollowedPage />} />
                 <Route path=":userPubKey" element={<UserProfile />} />
               </Route>
