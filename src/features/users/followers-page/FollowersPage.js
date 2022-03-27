@@ -2,6 +2,7 @@ import { useEffect, useContext, useState } from "react";
 
 import { Link, useParams } from "react-router-dom";
 import { Group, Text, Title, Loader, Button, Card } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
@@ -14,6 +15,7 @@ export const FollowersPage = observer(() => {
   const [loading, setLoading] = useState(false);
   const [followers, setFollowers] = useState(null);
   const [followersNames, setFollowersNames] = useState(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const params = useParams();
 
@@ -93,19 +95,26 @@ export const FollowersPage = observer(() => {
       <Loader />
     </Group>
   ) : followers !== null && followersNames !== null ? (
-    <Group direction="column">
-      {followers.map((follower, index) => (
-        <Card shadow="sm" p="lg" key={index}>
-          <Text size="xl">{followersNames[index]}</Text>
-          <Text>{follower}</Text>
-          <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
-            <Link to={"/user/" + follower}>
-              <Button>View Profile</Button>
-            </Link>
-          </Group>
-        </Card>
-      ))}
-    </Group>
+    <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
+      <Group direction="column">
+        {followers.map((follower, index) => (
+          <Card
+            shadow="sm"
+            p="lg"
+            key={index}
+            style={{ overflowWrap: "anywhere" }}
+          >
+            <Text size="xl">{followersNames[index]}</Text>
+            <Text>{follower}</Text>
+            <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
+              <Link to={"/user/" + follower}>
+                <Button>View Profile</Button>
+              </Link>
+            </Group>
+          </Card>
+        ))}
+      </Group>
+    </div>
   ) : (
     <Title order={2}>No followers yet.</Title>
   );

@@ -2,6 +2,7 @@ import { useEffect, useContext, useState } from "react";
 
 import { Link, useParams } from "react-router-dom";
 import { Group, Text, Title, Loader, Button, Card } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
 
@@ -14,6 +15,7 @@ export const FollowedPage = observer(() => {
   const [loading, setLoading] = useState(false);
   const [followedUsers, setFollowedUsers] = useState(null);
   const [followedUsersNames, setFollowedUsersNames] = useState(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const params = useParams();
 
@@ -93,19 +95,26 @@ export const FollowedPage = observer(() => {
       <Loader />
     </Group>
   ) : followedUsers !== null && followedUsersNames !== null ? (
-    <Group direction="column">
-      {followedUsers.map((followedUser, index) => (
-        <Card shadow="sm" p="lg" key={index}>
-          <Text size="xl">{followedUsersNames[index]}</Text>
-          <Text>{followedUser}</Text>
-          <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
-            <Link to={"/user/" + followedUser}>
-              <Button>View Profile</Button>
-            </Link>
-          </Group>
-        </Card>
-      ))}
-    </Group>
+    <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
+      <Group direction="column">
+        {followedUsers.map((followedUser, index) => (
+          <Card
+            shadow="sm"
+            p="lg"
+            key={index}
+            style={{ overflowWrap: "anywhere" }}
+          >
+            <Text size="xl">{followedUsersNames[index]}</Text>
+            <Text>{followedUser}</Text>
+            <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
+              <Link to={"/user/" + followedUser}>
+                <Button>View Profile</Button>
+              </Link>
+            </Group>
+          </Card>
+        ))}
+      </Group>
+    </div>
   ) : (
     <Title order={2}>No followed users.</Title>
   );
