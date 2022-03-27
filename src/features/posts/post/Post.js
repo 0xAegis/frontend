@@ -12,11 +12,14 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import { AppContext } from "../../..";
 import { getUser } from "../../../utils/aegis";
+import { getArcanaStorage, downloadFromArcana } from "../../../utils/arcana";
+import styles from "./Post.module.css";
 
 export const Post = ({ user, text, attachments, isPaid }) => {
   const appStore = useContext(AppContext);
   const [userName, setUserName] = useState(null);
   useEffect(() => {
+    console.log(attachments);
     const getUserNames = async () => {
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
@@ -31,7 +34,7 @@ export const Post = ({ user, text, attachments, isPaid }) => {
       setUserName(fetchedUser.name);
     };
     getUserNames();
-  }, [appStore.connectionStatus, user]);
+  }, [appStore.connectionStatus, user, attachments]);
 
   const theme = useMantineTheme();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -57,22 +60,31 @@ export const Post = ({ user, text, attachments, isPaid }) => {
     <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
       <Card shadow="sm" p="lg">
         <Text>{text}</Text>
+        <Group
+          position="right"
+          style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
+        >
+          {attachments.length ? (
+            <Button onClick={handleAttachmentDownload}>
+              Download Attachments
+            </Button>
+          ) : null}
+        </Group>
 
         <Group
           position="apart"
           style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
         >
-          <Link to={"/user/" + user}>
-            <Button>{userName}</Button>
+          <Link to={"/user/" + user} className={styles.link}>
+            <Badge color="red" variant="light" className={styles.badge}>
+              {userName}
+            </Badge>
           </Link>
           {isPaid ? (
             <Badge color="blue" variant="light">
               Paid
             </Badge>
           ) : null}
-          <Button onClick={handleAttachmentDownload}>
-            Download Attachments
-          </Button>
         </Group>
       </Card>
     </div>
