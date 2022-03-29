@@ -72,7 +72,7 @@ export const Post = ({ user, text, attachments, isPaid }) => {
 
   return (
     <div style={isMobile ? { width: "70vw" } : { width: 500 }}>
-      <Card shadow="sm" p="lg">
+      <Card shadow="sm" p="lg" withBorder>
         <Text>{text}</Text>
         <Group
           position="right"
