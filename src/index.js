@@ -9,7 +9,7 @@ import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
 import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
-import { FollowedPage } from "./features/users/followed-page/FollowedPage";
+import { FollowingPage } from "./features/users/following-page/FollowingPage";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
 import { Home } from "./features/users/home-page/Home";
 import { FollowersPage } from "./features/users/followers-page/FollowersPage";
@@ -30,7 +30,10 @@ ReactDOM.render(
                   path=":userPubKey/followers"
                   element={<FollowersPage />}
                 />
-                <Route path=":userPubKey/followed" element={<FollowedPage />} />
+                <Route
+                  path=":userPubKey/following"
+                  element={<FollowingPage />}
+                />
                 <Route path=":userPubKey" element={<UserProfile />} />
               </Route>
               <Route path="/" element={<Home />}></Route>

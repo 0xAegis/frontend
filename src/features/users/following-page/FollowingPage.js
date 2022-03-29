@@ -10,7 +10,7 @@ import { getUserHasFollowerNft, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
 import { getReceivers } from "../../../utils/superfluid";
 
-export const FollowedPage = observer(() => {
+export const FollowingPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [followedUsers, setFollowedUsers] = useState(null);
