@@ -102,11 +102,18 @@ export const FollowersPage = observer(() => {
             shadow="sm"
             p="lg"
             key={index}
-            style={{ overflowWrap: "anywhere" }}
+            style={{
+              overflowWrap: "anywhere",
+              width: "100%",
+              border: "1px solid black",
+            }}
           >
             <Text size="xl">{followersNames[index]}</Text>
-            <Text>{follower}</Text>
-            <Group position="right" style={{ marginBottom: 5, marginTop: 5 }}>
+            <Text color={"teal"}>{follower}</Text>
+            <Group
+              position={isMobile ? "center" : "right"}
+              style={{ marginBottom: 5, marginTop: 5 }}
+            >
               <Link to={"/user/" + follower}>
                 <Button>View Profile</Button>
               </Link>
