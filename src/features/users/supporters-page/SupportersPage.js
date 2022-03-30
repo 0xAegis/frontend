@@ -10,7 +10,7 @@ import { getUserHasFollowerNft, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
 import { getSenders } from "../../../utils/superfluid";
 
-export const FollowersPage = observer(() => {
+export const SupportersPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [followers, setFollowers] = useState(null);
@@ -123,6 +123,6 @@ export const FollowersPage = observer(() => {
       </Group>
     </div>
   ) : (
-    <Title order={2}>No followers yet.</Title>
+    <Title order={2}>You don't have any supporters yet.</Title>
   );
 });

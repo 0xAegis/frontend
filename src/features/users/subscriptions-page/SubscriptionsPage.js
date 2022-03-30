@@ -10,7 +10,7 @@ import { getUserHasFollowerNft, getUser } from "../../../utils/aegis";
 import { AppContext } from "../../..";
 import { getReceivers } from "../../../utils/superfluid";
 
-export const FollowingPage = observer(() => {
+export const SubscriptionsPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [followedUsers, setFollowedUsers] = useState(null);
@@ -123,6 +123,6 @@ export const FollowingPage = observer(() => {
       </Group>
     </div>
   ) : (
-    <Title order={2}>No followed users.</Title>
+    <Title order={2}>You're not subscribed to any user</Title>
   );
 });

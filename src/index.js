@@ -9,10 +9,10 @@ import App from "./App";
 import { GoogleOauthRedirect } from "./routes/oauth";
 import { AppStore } from "./store.js";
 import { UserProfile } from "./features/users/user-profile/UserProfile";
-import { FollowingPage } from "./features/users/following-page/FollowingPage";
+import { SubscriptionsPage } from "./features/users/subscriptions-page/SubscriptionsPage";
 import { CreateUser } from "./features/auth/create-user/CreateUser";
 import { Home } from "./features/users/home-page/Home";
-import { FollowersPage } from "./features/users/followers-page/FollowersPage";
+import { SupportersPage } from "./features/users/supporters-page/SupportersPage";
 
 export const AppContext = createContext();
 const appStore = new AppStore();
@@ -27,12 +27,12 @@ ReactDOM.render(
               <Route path="/create-account" element={<CreateUser />} />
               <Route path="user">
                 <Route
-                  path=":userPubKey/followers"
-                  element={<FollowersPage />}
+                  path=":userPubKey/supporters"
+                  element={<SupportersPage />}
                 />
                 <Route
-                  path=":userPubKey/following"
-                  element={<FollowingPage />}
+                  path=":userPubKey/subscriptions"
+                  element={<SubscriptionsPage />}
                 />
                 <Route path=":userPubKey" element={<UserProfile />} />
               </Route>
