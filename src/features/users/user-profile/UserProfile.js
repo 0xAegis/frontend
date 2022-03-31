@@ -1,13 +1,15 @@
 import { useEffect, useContext, useState } from "react";
 
 import { useParams } from "react-router-dom";
-import { Group, Text, Title, Loader, Button } from "@mantine/core";
+import { Group, Text, Title, Loader, Button, Anchor } from "@mantine/core";
 import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 
 import { CreatePost } from "../../posts/create-post/CreatePost";
 import {
   followUser,
+  getFollowerNftId,
   getPostsOfUser,
   getUser,
   getUserHasFollowerNft,
@@ -29,6 +31,7 @@ export const UserProfile = observer(() => {
   const [loading, setLoading] = useState(false);
   const [followingInProcess, setFollowingInProcess] = useState(false);
   const [unfollowingInProcess, setUnfollowingInProcess] = useState(false);
+  const [followerNftUrl, setFollowerNftUrl] = useState(null);
 
   const params = useParams();
 
@@ -86,6 +89,25 @@ export const UserProfile = observer(() => {
     appStore.user,
     appStore.polygonAccount,
   ]);
+
+  useEffect(() => {
+    const getFollowerNftUrl = async () => {
+      if (user && isFollowing) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const nftId = await getFollowerNftId({
+          provider,
+          nftAddress: user.nftAddress,
+          account: appStore.polygonAccount,
+        });
+        const raribleUrl = new URL(
+          user.nftAddress + ":" + nftId,
+          process.env.REACT_APP_RARIBLE_BASE_URL
+        ).href;
+        setFollowerNftUrl(raribleUrl);
+      }
+    };
+    getFollowerNftUrl();
+  }, [isFollowing, user, appStore.polygonAccount]);
 
   const handleFollow = async () => {
     setFollowingInProcess(true);
@@ -145,9 +167,14 @@ export const UserProfile = observer(() => {
       {params.userPubKey === appStore.polygonAccount ? (
         <CreatePost />
       ) : isFollowing ? (
-        <Button onClick={handleUnfollow} loading={unfollowingInProcess}>
-          Unfollow
-        </Button>
+        <Group direction="column">
+          <Anchor href={followerNftUrl} target="_blank">
+            Your follower NFT <ExternalLinkIcon />
+          </Anchor>
+          <Button onClick={handleUnfollow} loading={unfollowingInProcess}>
+            Unfollow
+          </Button>
+        </Group>
       ) : (
         <Button onClick={handleFollow} loading={followingInProcess}>
           Follow
