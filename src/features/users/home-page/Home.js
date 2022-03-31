@@ -97,11 +97,11 @@ export const Home = observer(() => {
       <Loader />
     </Group>
   ) : appStore.polygonAccount === null ? (
-    <Title order={2}>{"Please connect wallet."}</Title>
+    <Title order={2}>{"Please connect wallet to proceed."}</Title>
   ) : appStore.user === null ? (
     <Title order={2}>{"Please create an account."}</Title>
   ) : followedUsers === null ? (
-    <Title order={2}>{"You have not followed any users yet."}</Title>
+    <Title order={2}>{"You have not subscribed to any users."}</Title>
   ) : (
     <Group direction="column">
       <Title order={1}>{"All Posts"}</Title>
