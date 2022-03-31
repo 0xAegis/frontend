@@ -29,7 +29,7 @@ const ConnectArcana = observer(() => {
   const connectArcana = async () => {
     const arcanaAuth = await getArcanaAuth({ baseUrl: window.location.origin });
 
-    await arcanaAuth.loginWithSocial(SocialLoginType.github);
+    await arcanaAuth.loginWithSocial(SocialLoginType.google);
     if (arcanaAuth.isLoggedIn()) {
       const userInfo = arcanaAuth.getUserInfo();
       // Update Mobx Store

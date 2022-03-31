@@ -21,6 +21,7 @@ export const CreatePost = observer(() => {
   const TextInputLimitCheck = (e) => {
     setPostContent(e.target.value);
   };
+  const [isPosting, setIsPosting] = useState(false);
 
   // Use the useForm hook to create a form object
   const form = useForm({
@@ -34,7 +35,6 @@ export const CreatePost = observer(() => {
 
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
-    console.log(formValues);
     //Checking If connection status is false
     if (!window.ethereum) {
       console.log("Metamask is not installed.");
@@ -44,6 +44,7 @@ export const CreatePost = observer(() => {
       return;
     }
 
+    setIsPosting(true);
     let fileDids = [];
 
     // If there are attachments, upload them to Arcana
@@ -62,30 +63,51 @@ export const CreatePost = observer(() => {
         privateKey: appStore.arcanaAccount.privateKey,
         email: appStore.arcanaAccount.userInfo.email,
       });
-      const fileDids = await Promise.all(
-        formValues.attachments.map(
-          async (file) =>
-            await uploadToArcana({
-              arcanaStorage,
-              file: file,
-            })
-        )
+      fileDids = await Promise.all(
+        formValues.attachments.map(async (file) => {
+          let did = null;
+          while (!did) {
+            try {
+              did = await uploadToArcana({
+                arcanaStorage,
+                file: file,
+              });
+            } catch (error) {
+              console.log("Failed to upload file, retrying: ", file.name);
+            }
+          }
+          return did;
+        })
       );
       console.log("Attachments DIDs:", fileDids);
     }
 
     // Create the post on-chain
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const post = await createPost({
-      provider,
-      account: appStore.polygonAccount,
-      text: formValues.text,
-      attachments: fileDids,
-      isPaid: formValues.isPaid,
+    try {
+      const post = await createPost({
+        provider,
+        account: appStore.polygonAccount,
+        text: formValues.text,
+        attachments: fileDids,
+        isPaid: formValues.isPaid,
+      });
+      // store the newly created post in Mobx store
+      appStore.setPosts(appStore.posts.push(post));
+    } catch (error) {
+      notifications.showNotification({
+        title: "Transaction error",
+        message: "Some error happened while creating blockchain transaction",
+        color: "red",
+      });
+      setIsPosting(false);
+      return;
+    }
+    setIsPosting(false);
+    notifications.showNotification({
+      title: "Post created",
+      message: "You just created a post!",
     });
-    console.log(post);
-    // store the newly created post in Mobx store
-    appStore.setPosts(appStore.posts.push(post));
   };
 
   // Callback which gets called after the user has selected or drag-and-dropped a file
@@ -123,7 +145,7 @@ export const CreatePost = observer(() => {
                   <Text>Selected Files</Text>
                   <List>
                     {form.values.attachments.map((file) => (
-                      <ListItem>{file.name}</ListItem>
+                      <ListItem key={file.name}>{file.name}</ListItem>
                     ))}
                   </List>
                 </Group>
@@ -131,7 +153,7 @@ export const CreatePost = observer(() => {
             </Group>
           )}
         </Dropzone>
-        <Button position="right" type="submit">
+        <Button position="right" type="submit" loading={isPosting}>
           Post
         </Button>
       </Group>
