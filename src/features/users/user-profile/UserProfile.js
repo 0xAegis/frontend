@@ -99,11 +99,11 @@ export const UserProfile = observer(() => {
           nftAddress: user.nftAddress,
           account: appStore.polygonAccount,
         });
-        const openseaUrl = new URL(
-          user.nftAddress + "/" + nftId,
-          process.env.REACT_APP_OPENSEA_BASE_URL
+        const raribleUrl = new URL(
+          user.nftAddress + ":" + nftId,
+          process.env.REACT_APP_RARIBLE_BASE_URL
         ).href;
-        setFollowerNftUrl(openseaUrl);
+        setFollowerNftUrl(raribleUrl);
       }
     };
     getFollowerNftUrl();
