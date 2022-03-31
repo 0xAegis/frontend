@@ -177,7 +177,7 @@ export const UserProfile = observer(() => {
         </Group>
       ) : (
         <Button onClick={handleFollow} loading={followingInProcess}>
-          Follow
+          Subscribe
         </Button>
       )}
       <PostList posts={posts} />

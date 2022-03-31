@@ -18,7 +18,7 @@ export const CreatePost = observer(() => {
   const appStore = useContext(AppContext);
   //Keeping track of character count while writing post
   const [postContent, setPostContent] = useState("");
-  const TextInputLimitCheck = (e) => {
+  const textLengthCheck = (e) => {
     setPostContent(e.target.value);
   };
 
@@ -29,6 +29,14 @@ export const CreatePost = observer(() => {
       text: "",
       attachments: [],
       isPaid: true,
+    },
+    validate: {
+      text: (value) =>
+        value === ""
+          ? "Post text can not be empty"
+          : value.length > 256
+          ? "Post text can be at most 256 characters"
+          : null,
     },
   });
 
@@ -100,7 +108,7 @@ export const CreatePost = observer(() => {
     >
       <Group direction="column" position="center" grow={true}>
         <Textarea
-          onKeyUp={TextInputLimitCheck}
+          onKeyUp={textLengthCheck}
           minRows={4}
           maxRows={10}
           autosize
