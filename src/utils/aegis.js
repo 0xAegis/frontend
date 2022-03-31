@@ -123,3 +123,8 @@ export const getUserHasFollowerNft = async ({
   const aegis = getAegis({ provider });
   return aegis.userHasFollowerNft(followed, follower);
 };
+
+export const getFollowerNftId = async ({ provider, nftAddress, account }) => {
+  const aegisFollowers = new Contract(nftAddress, aegisFollowersABI, provider);
+  return (await aegisFollowers.tokenOfOwnerByIndex(account, 0)).toNumber();
+};

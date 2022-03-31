@@ -7,7 +7,7 @@ export class AppStore {
   user = null;
   posts = [];
   arcanaAccount = null;
-  polygonAccount = "";
+  polygonAccount = null;
   chainIsValid = false;
   numFollowerNftsMinted = 0;
   payingFollowers = [];
@@ -24,6 +24,7 @@ export class AppStore {
   }
 
   setPolygonAccount(polygonAccount) {
+    console.log(polygonAccount);
     this.polygonAccount = polygonAccount;
   }
 
