@@ -23,7 +23,9 @@ const App = observer(() => {
       const accounts = await provider.listAccounts();
       const network = await provider.getNetwork();
       // Update Mobx Store
-      appStore.setPolygonAccount(accounts[0]);
+      if (accounts.length) {
+        appStore.setPolygonAccount(accounts[0]);
+      }
       appStore.setChainIsValid(network);
       if (!appStore.polygonAccount) {
         console.log("no account");
