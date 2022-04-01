@@ -22,6 +22,7 @@ export const Post = ({ user, text, attachments, isPaid }) => {
   const appStore = useContext(AppContext);
   const notifications = useNotifications();
   const [userName, setUserName] = useState(null);
+
   useEffect(() => {
     console.log(attachments);
     const getUserNames = async () => {
@@ -60,13 +61,20 @@ export const Post = ({ user, text, attachments, isPaid }) => {
       email: appStore.arcanaAccount.userInfo.email,
     });
     await Promise.all(
-      attachments.map(
-        async (fileDid) =>
-          await downloadFromArcana({
-            arcanaStorage,
-            fileDid: fileDid,
-          })
-      )
+      attachments.map(async (fileDid) => {
+        let done = false;
+        while (!done) {
+          try {
+            await downloadFromArcana({
+              arcanaStorage,
+              fileDid: fileDid,
+            });
+          } catch (error) {
+            console.log("Faled to download, retrying:", fileDid);
+          }
+          done = true;
+        }
+      })
     );
   };
 
