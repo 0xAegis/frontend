@@ -28,7 +28,7 @@ export const UserProfile = observer(() => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [followingInProcess, setFollowingInProcess] = useState(false);
   const [unfollowingInProcess, setUnfollowingInProcess] = useState(false);
   const [followerNftUrl, setFollowerNftUrl] = useState(null);
@@ -159,7 +159,10 @@ export const UserProfile = observer(() => {
   };
 
   return loading ? (
-    <Loader />
+    <Group direction="row">
+      <Text size="xl">Loading...</Text>
+      <Loader />
+    </Group>
   ) : user !== null ? (
     <Group direction="column">
       <Title order={1}>{user.name}</Title>

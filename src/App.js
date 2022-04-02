@@ -3,7 +3,9 @@ import { useEffect, useContext } from "react";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 import { ethers } from "ethers";
-import { Container } from "@mantine/core";
+import { ColorSchemeProvider, Container } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
+import { useColorScheme, useLocalStorage } from "@mantine/hooks";
 
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
@@ -12,6 +14,13 @@ import { getSenders } from "./utils/superfluid";
 
 const App = observer(() => {
   const appStore = useContext(AppContext);
+  const preferredColorScheme = useColorScheme();
+  const [colorScheme, setColorScheme] = useLocalStorage({
+    key: "mantine-color-scheme",
+    defaultValue: preferredColorScheme,
+  });
+  const toggleColorScheme = (value) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
@@ -41,7 +50,7 @@ const App = observer(() => {
       }
     };
     checkConnectionStatus();
-  });
+  }, [appStore]);
 
   // Handle when chain (network) is changed
   useEffect(() => {
@@ -55,7 +64,7 @@ const App = observer(() => {
     return () => {
       window.ethereum.removeListener("chainChanged", handleChainChanged);
     };
-  });
+  }, []);
 
   // Handle when main account is changed
   useEffect(() => {
@@ -69,7 +78,7 @@ const App = observer(() => {
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  });
+  }, []);
 
   // On page load, check whether user has an account in Aegis
   useEffect(() => {
@@ -142,11 +151,18 @@ const App = observer(() => {
   }, [appStore.user, appStore.polygonAccount, appStore]);
 
   return (
-    <Container size="md">
-      <Navigation>
-        <Outlet />
-      </Navigation>
-    </Container>
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider theme={{ colorScheme: colorScheme }} withGlobalStyles>
+        <Container size="md">
+          <Navigation>
+            <Outlet />
+          </Navigation>
+        </Container>
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 });
 
