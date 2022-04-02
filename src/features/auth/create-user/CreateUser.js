@@ -71,7 +71,11 @@ export const CreateUser = observer(() => {
     >
       <form onSubmit={form.onSubmit(handleFormSubmit)}>
         <Group direction="column" position="center" grow={true}>
-          <TextInput required {...form.getInputProps("name")} />
+          <TextInput
+            placeholder="Enter name/alias"
+            required
+            {...form.getInputProps("name")}
+          />
           <Button position="right" type="submit" loading={creatingUser}>
             Create Account
           </Button>
