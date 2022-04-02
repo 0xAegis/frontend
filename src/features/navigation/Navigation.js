@@ -9,6 +9,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { useColorScheme } from "@mantine/hooks";
 
 import ConnectWallet from "../auth/connect-wallet/ConnectWallet";
 import ConnectArcana from "../auth/connect-arcana/ConnectArcana";
@@ -21,6 +22,11 @@ const Navigation = observer(({ children }) => {
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
   const appStore = useContext(AppContext);
+
+  const preferredColorScheme = useColorScheme();
+  const navbarClassName =
+    preferredColorScheme === "light" ? styles.nav_link : styles.nav_link_dark;
+
   return (
     <AppShell
       navbarOffsetBreakpoint="sm"
@@ -34,18 +40,18 @@ const Navigation = observer(({ children }) => {
           style={{ width: 250 }}
         >
           <Navbar.Section pb={20}>
-            <Link className={styles.nav_link} to={"/"}>
+            <Link className={navbarClassName} to={"/"}>
               Home
             </Link>
           </Navbar.Section>
           <Navbar.Section pb={20}>
             {appStore.user == null ? (
-              <Link className={styles.nav_link} to={"/create-account"}>
+              <Link className={navbarClassName} to={"/create-account"}>
                 Create Account
               </Link>
             ) : (
               <Link
-                className={styles.nav_link}
+                className={navbarClassName}
                 to={"/user/" + appStore.user.publicKey}
               >
                 Profile
@@ -55,7 +61,7 @@ const Navigation = observer(({ children }) => {
           <Navbar.Section pb={20}>
             {appStore.user == null ? null : (
               <Link
-                className={styles.nav_link}
+                className={navbarClassName}
                 to={"/user/" + appStore.user.publicKey + "/supporters"}
               >
                 Supporters
@@ -65,7 +71,7 @@ const Navigation = observer(({ children }) => {
           <Navbar.Section>
             {appStore.user == null ? null : (
               <Link
-                className={styles.nav_link}
+                className={navbarClassName}
                 to={"/user/" + appStore.user.publicKey + "/subscriptions"}
               >
                 Subscriptions
