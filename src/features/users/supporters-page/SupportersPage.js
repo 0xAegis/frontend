@@ -12,7 +12,9 @@ import { getSenders } from "../../../utils/superfluid";
 
 export const SupportersPage = observer(() => {
   const appStore = useContext(AppContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingUsername, setLoadingUsername] = useState(true);
+
   const [followers, setFollowers] = useState(null);
   const [followersNames, setFollowersNames] = useState(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -74,22 +76,25 @@ export const SupportersPage = observer(() => {
       if (!appStore.connectionStatus) {
         return;
       }
-      //Checking If connection status is false
-      if (followers === null) {
-        return;
-      }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      let allNames = [];
-      for (const follower of followers) {
-        const user = await getUser({ provider, account: follower });
-        allNames.push(user.name);
-      }
-      setFollowersNames(allNames);
+      setLoadingUsername(true);
+      try {
+        if (followers === null) {
+          throw new Error();
+        }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        let allNames = [];
+        for (const follower of followers) {
+          const user = await getUser({ provider, account: follower });
+          allNames.push(user.name);
+        }
+        setFollowersNames(allNames);
+      } catch {}
+      setLoadingUsername(false);
     };
     getUserNames();
   }, [appStore.connectionStatus, followers]);
 
-  return loading ? (
+  return loading || loadingUsername ? (
     <Group direction="row">
       <Text size="xl">Loading...</Text>
       <Loader />
