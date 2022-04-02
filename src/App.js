@@ -41,7 +41,7 @@ const App = observer(() => {
       }
     };
     checkConnectionStatus();
-  });
+  }, [appStore]);
 
   // Handle when chain (network) is changed
   useEffect(() => {
@@ -55,7 +55,7 @@ const App = observer(() => {
     return () => {
       window.ethereum.removeListener("chainChanged", handleChainChanged);
     };
-  });
+  }, []);
 
   // Handle when main account is changed
   useEffect(() => {
@@ -69,7 +69,7 @@ const App = observer(() => {
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  });
+  }, []);
 
   // On page load, check whether user has an account in Aegis
   useEffect(() => {

@@ -8,6 +8,6 @@ export const GoogleOauthRedirect = () => {
       AuthProvider.handleRedirectPage(window.location.origin);
     };
     handleRedirect();
-  });
+  }, []);
   return "redirecting...";
 };
