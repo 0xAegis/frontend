@@ -13,6 +13,7 @@ import { getReceivers } from "../../../utils/superfluid";
 export const SubscriptionsPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
+  const [loadingUsername, setLoadingUsername] = useState(false);
   const [followedUsers, setFollowedUsers] = useState(null);
   const [followedUsersNames, setFollowedUsersNames] = useState(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -78,6 +79,7 @@ export const SubscriptionsPage = observer(() => {
       if (followedUsers === null) {
         return;
       }
+      setLoadingUsername(true);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       let allNames = [];
       for (const followedUser of followedUsers) {
@@ -85,11 +87,12 @@ export const SubscriptionsPage = observer(() => {
         allNames.push(user.name);
       }
       setFollowedUsersNames(allNames);
+      setLoadingUsername(false);
     };
     getUserNames();
   }, [appStore.connectionStatus, followedUsers]);
 
-  return loading ? (
+  return loading || loadingUsername ? (
     <Group direction="row">
       <Text size="xl">Loading...</Text>
       <Loader />
@@ -123,6 +126,6 @@ export const SubscriptionsPage = observer(() => {
       </Group>
     </div>
   ) : (
-    <Title order={2}>You're not subscribed to any user</Title>
+    <Title order={2}>You're not subscribed to any user.</Title>
   );
 });

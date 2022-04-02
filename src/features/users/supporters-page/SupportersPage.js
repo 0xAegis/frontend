@@ -13,6 +13,8 @@ import { getSenders } from "../../../utils/superfluid";
 export const SupportersPage = observer(() => {
   const appStore = useContext(AppContext);
   const [loading, setLoading] = useState(false);
+  const [loadingUsername, setLoadingUsername] = useState(false);
+
   const [followers, setFollowers] = useState(null);
   const [followersNames, setFollowersNames] = useState(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -78,6 +80,7 @@ export const SupportersPage = observer(() => {
       if (followers === null) {
         return;
       }
+      setLoadingUsername(true);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       let allNames = [];
       for (const follower of followers) {
@@ -85,11 +88,12 @@ export const SupportersPage = observer(() => {
         allNames.push(user.name);
       }
       setFollowersNames(allNames);
+      setLoadingUsername(false);
     };
     getUserNames();
   }, [appStore.connectionStatus, followers]);
 
-  return loading ? (
+  return loading || loadingUsername ? (
     <Group direction="row">
       <Text size="xl">Loading...</Text>
       <Loader />
