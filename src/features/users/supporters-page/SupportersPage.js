@@ -12,8 +12,8 @@ import { getSenders } from "../../../utils/superfluid";
 
 export const SupportersPage = observer(() => {
   const appStore = useContext(AppContext);
-  const [loading, setLoading] = useState(false);
-  const [loadingUsername, setLoadingUsername] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingUsername, setLoadingUsername] = useState(true);
 
   const [followers, setFollowers] = useState(null);
   const [followersNames, setFollowersNames] = useState(null);
@@ -76,18 +76,19 @@ export const SupportersPage = observer(() => {
       if (!appStore.connectionStatus) {
         return;
       }
-      //Checking If connection status is false
-      if (followers === null) {
-        return;
-      }
       setLoadingUsername(true);
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      let allNames = [];
-      for (const follower of followers) {
-        const user = await getUser({ provider, account: follower });
-        allNames.push(user.name);
-      }
-      setFollowersNames(allNames);
+      try {
+        if (followers === null) {
+          throw new Error();
+        }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        let allNames = [];
+        for (const follower of followers) {
+          const user = await getUser({ provider, account: follower });
+          allNames.push(user.name);
+        }
+        setFollowersNames(allNames);
+      } catch {}
       setLoadingUsername(false);
     };
     getUserNames();

@@ -12,8 +12,8 @@ import { getReceivers } from "../../../utils/superfluid";
 
 export const SubscriptionsPage = observer(() => {
   const appStore = useContext(AppContext);
-  const [loading, setLoading] = useState(false);
-  const [loadingUsername, setLoadingUsername] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingUsername, setLoadingUsername] = useState(true);
   const [followedUsers, setFollowedUsers] = useState(null);
   const [followedUsersNames, setFollowedUsersNames] = useState(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -75,18 +75,20 @@ export const SubscriptionsPage = observer(() => {
       if (!appStore.connectionStatus) {
         return;
       }
-      //Checking If connection status is false
-      if (followedUsers === null) {
-        return;
-      }
       setLoadingUsername(true);
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      let allNames = [];
-      for (const followedUser of followedUsers) {
-        const user = await getUser({ provider, account: followedUser });
-        allNames.push(user.name);
-      }
-      setFollowedUsersNames(allNames);
+      try {
+        if (followedUsers === null) {
+          throw new Error();
+        }
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        let allNames = [];
+        for (const followedUser of followedUsers) {
+          const user = await getUser({ provider, account: followedUser });
+          allNames.push(user.name);
+        }
+        setFollowedUsersNames(allNames);
+      } catch {}
       setLoadingUsername(false);
     };
     getUserNames();
