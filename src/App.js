@@ -1,11 +1,11 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext } from "react";
 
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 import { ethers } from "ethers";
 import { ColorSchemeProvider, Container } from "@mantine/core";
 import { MantineProvider } from "@mantine/core";
-import { useColorScheme } from "@mantine/hooks";
+import { useColorScheme, useLocalStorage } from "@mantine/hooks";
 
 import Navigation from "./features/navigation/Navigation";
 import { AppContext } from ".";
@@ -15,7 +15,10 @@ import { getSenders } from "./utils/superfluid";
 const App = observer(() => {
   const appStore = useContext(AppContext);
   const preferredColorScheme = useColorScheme();
-  const [colorScheme, setColorScheme] = useState(preferredColorScheme);
+  const [colorScheme, setColorScheme] = useLocalStorage({
+    key: "mantine-color-scheme",
+    defaultValue: preferredColorScheme,
+  });
   const toggleColorScheme = (value) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
