@@ -1,9 +1,9 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 import { ethers } from "ethers";
-import { Container } from "@mantine/core";
+import { ColorSchemeProvider, Container } from "@mantine/core";
 import { MantineProvider } from "@mantine/core";
 import { useColorScheme } from "@mantine/hooks";
 
@@ -15,6 +15,9 @@ import { getSenders } from "./utils/superfluid";
 const App = observer(() => {
   const appStore = useContext(AppContext);
   const preferredColorScheme = useColorScheme();
+  const [colorScheme, setColorScheme] = useState(preferredColorScheme);
+  const toggleColorScheme = (value) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
@@ -145,16 +148,18 @@ const App = observer(() => {
   }, [appStore.user, appStore.polygonAccount, appStore]);
 
   return (
-    <MantineProvider
-      theme={{ colorScheme: preferredColorScheme }}
-      withGlobalStyles
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
     >
-      <Container size="md">
-        <Navigation>
-          <Outlet />
-        </Navigation>
-      </Container>
-    </MantineProvider>
+      <MantineProvider theme={{ colorScheme: colorScheme }} withGlobalStyles>
+        <Container size="md">
+          <Navigation>
+            <Outlet />
+          </Navigation>
+        </Container>
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 });
 
