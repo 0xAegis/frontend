@@ -169,10 +169,10 @@ export const UserProfile = observer(() => {
       ) : isFollowing ? (
         <Group direction="column">
           <Anchor href={followerNftUrl} target="_blank">
-            Your follower NFT <ExternalLinkIcon />
+            Your Supporter NFT <ExternalLinkIcon />
           </Anchor>
           <Button onClick={handleUnfollow} loading={unfollowingInProcess}>
-            Unfollow
+            Unsubscribe
           </Button>
         </Group>
       ) : (
