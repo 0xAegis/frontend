@@ -2,6 +2,8 @@
 
 The frontend of Aegis created using React.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0d373c74-da0e-44d3-ab16-924794cde1df/deploy-status)](https://app.netlify.com/sites/aegis-staging/deploys)
+
 ## Setting up the environment
 
 Install Node dependencies using _yarn_.
