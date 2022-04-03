@@ -74,28 +74,36 @@ export const followUser = async ({ provider, account, user }) => {
 };
 
 export const getUser = async ({ provider, account }) => {
-  //   const client = new ApolloClient({
-  //     uri: process.env.REACT_APP_GRAPH_API_URL,
-  //     cache: new InMemoryCache(),
-  //   });
+  const client = new ApolloClient({
+    uri: process.env.REACT_APP_GRAPH_API_URL,
+    cache: new InMemoryCache(),
+  });
 
-  //   const query = `
-  //   query {
-  //     users {
-  //       id
-  //       tokenID
-  //       contentURI
-  //       metadataURI
-  //     }
-  //   }
-  // `;
-
-  const aegis = getAegis({ provider, account });
-  const userInfo = await aegis.users(account);
-  if (userInfo.publicKey === ethers.constants.AddressZero) {
-    return null;
-  }
-  return formatUserInfo(userInfo);
+  const query = `
+    query ($userId: String) {
+      user(id: $userId) {
+        id
+        name
+        arcanaPublicKey
+        nftAddress
+        posts(orderBy: timestamp, orderDirection: desc) {
+          isPaid
+          timestamp
+          text
+          attachments
+          author {
+            id
+          }
+        }
+      }
+    }`;
+  const result = await client.query({
+    query: gql(query),
+    variables: {
+      userId: account.toLowerCase(),
+    },
+  });
+  return result.data.user;
 };
 
 export const getPostsOfUser = async ({ provider, account }) => {
