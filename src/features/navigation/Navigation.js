@@ -56,7 +56,7 @@ const Navigation = observer(({ children }) => {
             ) : (
               <Link
                 className={navbarClassName}
-                to={"/user/" + appStore.user.publicKey}
+                to={"/user/" + appStore.user.id}
               >
                 Profile
               </Link>
@@ -66,7 +66,7 @@ const Navigation = observer(({ children }) => {
             {appStore.user == null ? null : (
               <Link
                 className={navbarClassName}
-                to={"/user/" + appStore.user.publicKey + "/supporters"}
+                to={"/user/" + appStore.user.id + "/supporters"}
               >
                 Supporters
               </Link>
@@ -76,7 +76,7 @@ const Navigation = observer(({ children }) => {
             {appStore.user == null ? null : (
               <Link
                 className={navbarClassName}
-                to={"/user/" + appStore.user.publicKey + "/subscriptions"}
+                to={"/user/" + appStore.user.id + "/subscriptions"}
               >
                 Subscriptions
               </Link>

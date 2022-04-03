@@ -20,7 +20,7 @@ import { getArcanaStorage, downloadFromArcana } from "../../../utils/arcana";
 import styles from "./Post.module.css";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 
-export const Post = ({ user, text, attachments, isPaid }) => {
+export const Post = ({ author, text, attachments, isPaid }) => {
   const appStore = useContext(AppContext);
   const notifications = useNotifications();
   const [userName, setUserName] = useState(null);
@@ -36,11 +36,11 @@ export const Post = ({ user, text, attachments, isPaid }) => {
         return;
       }
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const fetchedUser = await getUser({ provider, account: user });
+      const fetchedUser = await getUser({ provider, account: author.id });
       setUserName(fetchedUser.name);
     };
     getUserNames();
-  }, [appStore.connectionStatus, user, attachments]);
+  }, [appStore.connectionStatus, author.id, attachments]);
 
   const theme = useMantineTheme();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -113,7 +113,7 @@ export const Post = ({ user, text, attachments, isPaid }) => {
           position="apart"
           style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
         >
-          <Link to={"/user/" + user} className={styles.link}>
+          <Link to={"/user/" + author.id} className={styles.link}>
             <Badge color="red" variant="light" className={styles.badge}>
               {userName}
             </Badge>
