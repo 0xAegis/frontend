@@ -9,6 +9,7 @@ import {
   Group,
   useMantineTheme,
   Button,
+  Anchor,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useNotifications } from "@mantine/notifications";
@@ -17,6 +18,7 @@ import { AppContext } from "../../..";
 import { getUser } from "../../../utils/aegis";
 import { getArcanaStorage, downloadFromArcana } from "../../../utils/arcana";
 import styles from "./Post.module.css";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 
 export const Post = ({ user, text, attachments, isPaid }) => {
   const appStore = useContext(AppContext);
@@ -24,7 +26,6 @@ export const Post = ({ user, text, attachments, isPaid }) => {
   const [userName, setUserName] = useState(null);
 
   useEffect(() => {
-    console.log(attachments);
     const getUserNames = async () => {
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
@@ -44,7 +45,7 @@ export const Post = ({ user, text, attachments, isPaid }) => {
   const theme = useMantineTheme();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const handleAttachmentDownload = async () => {
+  const handleArcanaDownload = async () => {
     if (!appStore.arcanaAccount) {
       notifications.showNotification({
         title: "Connect to Arcana",
@@ -61,16 +62,17 @@ export const Post = ({ user, text, attachments, isPaid }) => {
       email: appStore.arcanaAccount.userInfo.email,
     });
     await Promise.all(
-      attachments.map(async (fileDid) => {
+      attachments.map(async (uri) => {
         let done = false;
         while (!done) {
           try {
             await downloadFromArcana({
               arcanaStorage,
-              fileDid: fileDid,
+              // Remove the arcana:// from the start of the URI by slicing
+              fileDid: uri.slice(9),
             });
           } catch (error) {
-            console.log("Faled to download, retrying:", fileDid);
+            console.log("Failed to download, retrying:", uri);
           }
           done = true;
         }
@@ -87,9 +89,23 @@ export const Post = ({ user, text, attachments, isPaid }) => {
           style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
         >
           {attachments.length ? (
-            <Button onClick={handleAttachmentDownload}>
-              Download Attachments
-            </Button>
+            isPaid ? (
+              <Button onClick={handleArcanaDownload}>
+                Download Attachments
+              </Button>
+            ) : (
+              <Anchor
+                href={
+                  process.env.REACT_APP_IPFS_GATEWAY_URL +
+                  "/ipfs/" +
+                  // Remove the ipfs:// from the start of the URI by slicing
+                  attachments[0].slice(7)
+                }
+                target="_blank"
+              >
+                View Attachments <ExternalLinkIcon />
+              </Anchor>
+            )
           ) : null}
         </Group>
 

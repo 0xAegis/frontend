@@ -1,5 +1,13 @@
 import { useState, useContext } from "react";
-import { Button, Group, List, ListItem, Text, Textarea } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Group,
+  List,
+  ListItem,
+  Text,
+  Textarea,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/hooks";
@@ -10,6 +18,7 @@ import { getArcanaStorage, uploadToArcana } from "../../../utils/arcana";
 import { createPost } from "../../../utils/aegis";
 import { AppContext } from "../../..";
 import { useNotifications } from "@mantine/notifications";
+import { uploadToIpfs } from "../../../utils/ipfs";
 
 // Wrapper over a form for creating posts on Aegis
 export const CreatePost = observer(() => {
@@ -29,7 +38,7 @@ export const CreatePost = observer(() => {
     initialValues: {
       text: "",
       attachments: [],
-      isPaid: true,
+      isPaid: false,
     },
     validate: {
       text: (value) =>
@@ -43,6 +52,7 @@ export const CreatePost = observer(() => {
 
   // Callback which gets called when the form is submitted
   const handleFormSubmit = async (formValues) => {
+    console.log(formValues);
     //Checking If connection status is false
     if (!window.ethereum) {
       console.log("Metamask is not installed.");
@@ -53,41 +63,50 @@ export const CreatePost = observer(() => {
     }
 
     setIsPosting(true);
-    let fileDids = [];
+    let fileUris = [];
 
-    // If there are attachments, upload them to Arcana
+    // If there are attachments, upload them to Arcana or IPFS
     if (formValues.attachments.length) {
-      if (!appStore.arcanaAccount) {
-        notifications.showNotification({
-          title: "Connect to Arcana",
-          message:
-            "You need to connect to Arcana before you can make posts with attachments",
-          color: "teal",
+      if (formValues.isPaid) {
+        if (!appStore.arcanaAccount) {
+          notifications.showNotification({
+            title: "Connect to Arcana",
+            message:
+              "You need to connect to Arcana before you can make posts with attachments",
+            color: "teal",
+          });
+          return;
+        }
+        // Upload the files to Arcana
+        const arcanaStorage = getArcanaStorage({
+          privateKey: appStore.arcanaAccount.privateKey,
+          email: appStore.arcanaAccount.userInfo.email,
         });
-        return;
-      }
-      // Upload the files to Arcana
-      const arcanaStorage = getArcanaStorage({
-        privateKey: appStore.arcanaAccount.privateKey,
-        email: appStore.arcanaAccount.userInfo.email,
-      });
-      fileDids = await Promise.all(
-        formValues.attachments.map(async (file) => {
-          let did = null;
-          while (!did) {
-            try {
-              did = await uploadToArcana({
-                arcanaStorage,
-                file: file,
-              });
-            } catch (error) {
-              console.log("Failed to upload file, retrying: ", file.name);
+        const fileDids = await Promise.all(
+          formValues.attachments.map(async (file) => {
+            let did = null;
+            while (!did) {
+              try {
+                did = await uploadToArcana({
+                  arcanaStorage,
+                  file: file,
+                });
+              } catch (error) {
+                console.log("Failed to upload file, retrying: ", file.name);
+              }
             }
-          }
-          return did;
-        })
-      );
-      console.log("Attachments DIDs:", fileDids);
+            return did;
+          })
+        );
+        fileUris = fileDids.map((did) => "arcana://" + did);
+      } else {
+        console.log("hello here");
+
+        // Upload the files to IPFS
+        const cid = await uploadToIpfs(formValues.attachments);
+        fileUris = ["ipfs://" + cid];
+      }
+      console.log("Attachments URIs:", fileUris);
     }
 
     // Create the post on-chain
@@ -97,7 +116,7 @@ export const CreatePost = observer(() => {
         provider,
         account: appStore.polygonAccount,
         text: formValues.text,
-        attachments: fileDids,
+        attachments: fileUris,
         isPaid: formValues.isPaid,
       });
       // store the newly created post in Mobx store
@@ -162,6 +181,10 @@ export const CreatePost = observer(() => {
             </Group>
           )}
         </Dropzone>
+        <Checkbox
+          label="Is this a paid post?"
+          {...form.getInputProps("isPaid")}
+        />
         <Button position="right" type="submit" loading={isPosting}>
           Post
         </Button>
