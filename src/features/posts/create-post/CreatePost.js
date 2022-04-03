@@ -130,6 +130,7 @@ export const CreatePost = observer(() => {
     >
       <Group direction="column" position="center" grow={true}>
         <Textarea
+          placeholder="What's happening?"
           onKeyUp={textLengthCheck}
           minRows={4}
           maxRows={10}
