@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers";
+import { Contract } from "ethers";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 import { abi as aegisABI } from "./Aegis.json";
