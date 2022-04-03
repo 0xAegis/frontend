@@ -103,10 +103,8 @@ export const CreatePost = observer(() => {
         console.log("hello here");
 
         // Upload the files to IPFS
-        const fileCids = await Promise.all(
-          formValues.attachments.map(async (file) => uploadToIpfs(file))
-        );
-        fileUris = fileCids.map((cid) => "ipfs://" + cid);
+        const cid = await uploadToIpfs(formValues.attachments);
+        fileUris = ["ipfs://" + cid];
       }
       console.log("Attachments URIs:", fileUris);
     }
