@@ -5,7 +5,7 @@ export const PostList = ({ posts }) => {
   const postRows = posts.map((post, index) => (
     <tr key={index}>
       <td>
-        <Post {...post} key={post.user + "::" + post.postIndex.toString()} />
+        <Post {...post} key={post.user + "-" + post.timestamp.toString()} />
       </td>
     </tr>
   ));

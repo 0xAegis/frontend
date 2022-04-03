@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.5.10",
     "@arcana/auth": "^0.0.8",
     "@arcana/storage": "https://github.com/arcana-network/storage",
     "@mantine/core": "^4.1.0",

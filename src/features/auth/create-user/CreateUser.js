@@ -38,7 +38,9 @@ export const CreateUser = observer(() => {
 
     try {
       // Get Arcana public key of the connected user
-      const arcanaAuth = getArcanaAuth({ baseUrl: window.location.origin });
+      const arcanaAuth = await getArcanaAuth({
+        baseUrl: window.location.origin,
+      });
       const publicKeyCoords = await arcanaAuth.getPublicKey({
         verifier: appStore.arcanaAccount.loginType,
         id: appStore.arcanaAccount.userInfo.id,
@@ -57,6 +59,7 @@ export const CreateUser = observer(() => {
       appStore.setUser(userInfo);
     } catch (error) {
       console.log("Some error happened while creating user.");
+      console.log(error);
     }
 
     setCreatingUser(false);

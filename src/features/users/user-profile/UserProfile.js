@@ -75,8 +75,9 @@ export const UserProfile = observer(() => {
         setPosts(posts);
         setIsFollowing(isFollowing);
         await getSenders({ provider, receiver: params.userPubKey });
-      } catch {
+      } catch (error) {
         console.log("error: check url for invalid account addresss");
+        console.log(error);
       }
 
       setLoading(false);
