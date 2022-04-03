@@ -33,7 +33,7 @@ const App = observer(() => {
       const network = await provider.getNetwork();
       // Update Mobx Store
       if (accounts.length) {
-        appStore.setPolygonAccount(accounts[0]);
+        appStore.setPolygonAccount(accounts[0].toLowerCase());
       }
       appStore.setChainIsValid(network);
       if (!appStore.polygonAccount) {

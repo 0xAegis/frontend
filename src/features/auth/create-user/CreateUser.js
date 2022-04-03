@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Button, Group, TextInput, Box } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
+import { useNotifications } from "@mantine/notifications";
 import { ethers } from "ethers";
 
 import { observer } from "mobx-react-lite";
@@ -10,6 +11,7 @@ import { AppContext } from "../../..";
 import { getArcanaAuth, padPublicKey } from "../../../utils/arcana";
 
 export const CreateUser = observer(() => {
+  const notifications = useNotifications();
   const [creatingUser, setCreatingUser] = useState(false);
   const appStore = useContext(AppContext);
   const form = useForm({
@@ -31,6 +33,12 @@ export const CreateUser = observer(() => {
       return;
     }
     if (!appStore.arcanaAccount) {
+      notifications.showNotification({
+        title: "Connect to Arcana",
+        message:
+          "You need to connect to Arcana before you can create an account.",
+        color: "teal",
+      });
       return;
     }
 
