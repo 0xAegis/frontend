@@ -96,6 +96,8 @@ export const Home = observer(() => {
       <Text size="xl">Loading...</Text>
       <Loader />
     </Group>
+  ) : !appStore.metamaskInstalled ? (
+    <Title order={2}>{"Please install Metamask to proceed."}</Title>
   ) : appStore.polygonAccount === null ? (
     <Title order={2}>{"Please connect wallet to proceed."}</Title>
   ) : appStore.user === null ? (

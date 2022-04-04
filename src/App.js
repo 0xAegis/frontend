@@ -25,28 +25,31 @@ const App = observer(() => {
   useEffect(() => {
     // On page load, check whether Metamask is connected and to the right chain
     const checkConnectionStatus = async () => {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      const accounts = await provider.listAccounts();
-      const network = await provider.getNetwork();
-      // Update Mobx Store
-      if (accounts.length) {
-        appStore.setPolygonAccount(accounts[0]);
-      }
-      appStore.setChainIsValid(network);
-      if (!appStore.polygonAccount) {
-        console.log("no account");
-        return;
-      }
       if (!window.ethereum) {
         console.log("Metamask is not installed.");
+        appStore.setMetamaskInstalled(false);
         return;
+      } else {
+        appStore.setMetamaskInstalled(true);
+      }
+      try {
+        const provider = new ethers.providers.Web3Provider(
+          window.ethereum,
+          "any"
+        );
+        const accounts = await provider.listAccounts();
+        const network = await provider.getNetwork();
+        // Update Mobx Store
+        if (accounts.length) {
+          appStore.setPolygonAccount(accounts[0]);
+        }
+        appStore.setChainIsValid(network);
+      } catch {}
+      if (!appStore.polygonAccount) {
+        console.log("no account");
       }
       if (!appStore.chainIsValid) {
         console.log("Chain is not valid");
-        return;
       }
     };
     checkConnectionStatus();
@@ -58,6 +61,10 @@ const App = observer(() => {
       // It is recommended to reload the page
       window.location.reload();
     };
+    if (!window.ethereum) {
+      console.log("Metamask is not installed.");
+      return;
+    }
     window.ethereum.on("chainChanged", handleChainChanged);
 
     // Remove event listener on cleanup
@@ -72,6 +79,10 @@ const App = observer(() => {
       // It is recommended to reload the page
       window.location.reload();
     };
+    if (!window.ethereum) {
+      console.log("Metamask is not installed.");
+      return;
+    }
     window.ethereum.on("accountsChanged", handleAccountsChanged);
 
     // Remove event listener on cleanup
