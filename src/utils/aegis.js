@@ -1,7 +1,8 @@
-import { Contract, ethers } from "ethers";
+import { Contract } from "ethers";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 import { abi as aegisABI } from "./Aegis.json";
-import { abi as aegisFollowersABI } from "./AegisFollowers.json";
+import { abi as aegisSupporterTokenABI } from "./AegisSupporterToken.json";
 
 const getAegis = ({ provider, account }) => {
   let signerOrProvider;
@@ -28,10 +29,9 @@ const formatUserInfo = (userInfo) => {
 };
 
 //format a post fetched from ethers to a sane and predictable format
-const formatPost = ({ post, creator }) => {
+const formatPost = ({ post }) => {
   return {
-    user: post.user,
-    postIndex: post.postIndex.toNumber(),
+    user: post.author,
     text: post.text,
     attachments: post.attachments,
     isPaid: post.isPaid,
@@ -67,13 +67,43 @@ export const createPost = async ({
   return formatPost({ post: postCreatedEvent.args, creator: account });
 };
 
-export const getUser = async ({ provider, account }) => {
+export const followUser = async ({ provider, account, user }) => {
   const aegis = getAegis({ provider, account });
-  const userInfo = await aegis.users(account);
-  if (userInfo.publicKey === ethers.constants.AddressZero) {
-    return null;
-  }
-  return formatUserInfo(userInfo);
+  const followUserTx = await aegis.followUser(user);
+  await followUserTx.wait();
+};
+
+export const getUser = async ({ provider, account }) => {
+  const client = new ApolloClient({
+    uri: process.env.REACT_APP_GRAPH_API_URL,
+    cache: new InMemoryCache(),
+  });
+
+  const query = `
+    query ($userId: String) {
+      user(id: $userId) {
+        id
+        name
+        arcanaPublicKey
+        nftAddress
+        posts(orderBy: timestamp, orderDirection: desc) {
+          isPaid
+          timestamp
+          text
+          attachments
+          author {
+            id
+          }
+        }
+      }
+    }`;
+  const result = await client.query({
+    query: gql(query),
+    variables: {
+      userId: account.toLowerCase(),
+    },
+  });
+  return result.data.user;
 };
 
 export const getPostsOfUser = async ({ provider, account }) => {
@@ -84,16 +114,8 @@ export const getPostsOfUser = async ({ provider, account }) => {
   const postCreatedEvents = await aegis.queryFilter(filter);
   const posts = postCreatedEvents.map((event) => event.args);
 
-  const formattedPosts = posts.map((post) =>
-    formatPost({ post, creator: account })
-  );
+  const formattedPosts = posts.map((post) => formatPost({ post }));
   return formattedPosts;
-};
-
-export const followUser = async ({ provider, account, user }) => {
-  const aegis = getAegis({ provider, account });
-  const followUserTx = await aegis.followUser(user);
-  await followUserTx.wait();
 };
 
 export const getFollowerNftCount = async ({
@@ -103,7 +125,7 @@ export const getFollowerNftCount = async ({
 }) => {
   const aegisFollowers = new Contract(
     followedUser.nftAddress,
-    aegisFollowersABI,
+    aegisSupporterTokenABI,
     provider
   );
   const count = (await aegisFollowers.balanceOf(follower)).toNumber();
@@ -111,7 +133,11 @@ export const getFollowerNftCount = async ({
 };
 
 export const getNumNftsMinted = async ({ provider, nftAddress }) => {
-  const aegisFollowers = new Contract(nftAddress, aegisFollowersABI, provider);
+  const aegisFollowers = new Contract(
+    nftAddress,
+    aegisSupporterTokenABI,
+    provider
+  );
   return (await aegisFollowers.totalSupply()).toNumber();
 };
 
@@ -125,6 +151,10 @@ export const getUserHasFollowerNft = async ({
 };
 
 export const getFollowerNftId = async ({ provider, nftAddress, account }) => {
-  const aegisFollowers = new Contract(nftAddress, aegisFollowersABI, provider);
+  const aegisFollowers = new Contract(
+    nftAddress,
+    aegisSupporterTokenABI,
+    provider
+  );
   return (await aegisFollowers.tokenOfOwnerByIndex(account, 0)).toNumber();
 };

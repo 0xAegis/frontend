@@ -10,7 +10,6 @@ import { CreatePost } from "../../posts/create-post/CreatePost";
 import {
   followUser,
   getFollowerNftId,
-  getPostsOfUser,
   getUser,
   getUserHasFollowerNft,
 } from "../../../utils/aegis";
@@ -26,7 +25,6 @@ import {
 export const UserProfile = observer(() => {
   const appStore = useContext(AppContext);
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [followingInProcess, setFollowingInProcess] = useState(false);
@@ -51,10 +49,7 @@ export const UserProfile = observer(() => {
       //Introduce try catch block to handle error rising out of url with invalid account addresses
       try {
         const user = await getUser({ provider, account: params.userPubKey });
-        const posts = await getPostsOfUser({
-          provider,
-          account: params.userPubKey,
-        });
+        console.log(user);
         const userHasFollowerNft = await getUserHasFollowerNft({
           provider,
           follower: appStore.polygonAccount,
@@ -72,11 +67,11 @@ export const UserProfile = observer(() => {
 
         // Update state
         setUser(user);
-        setPosts(posts);
         setIsFollowing(isFollowing);
         await getSenders({ provider, receiver: params.userPubKey });
-      } catch {
+      } catch (error) {
         console.log("error: check url for invalid account addresss");
+        console.log(error);
       }
 
       setLoading(false);
@@ -183,7 +178,7 @@ export const UserProfile = observer(() => {
           Subscribe
         </Button>
       )}
-      <PostList posts={posts} />
+      <PostList posts={user.posts} />
     </Group>
   ) : (
     <Title order={2}>This user doesn't exist.</Title>
