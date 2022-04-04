@@ -11,6 +11,7 @@ export class AppStore {
   chainIsValid = false;
   numFollowerNftsMinted = 0;
   payingFollowers = [];
+  metamaskInstalled = false;
 
   setUser(user) {
     this.user = user;
@@ -32,6 +33,10 @@ export class AppStore {
     if (network.chainId === parseInt(process.env.REACT_APP_CHAIN_ID)) {
       this.chainIsValid = true;
     }
+  }
+
+  setMetamaskInstalled(metamaskInstalled) {
+    this.metamaskInstalled = metamaskInstalled;
   }
 
   get connectionStatus() {
