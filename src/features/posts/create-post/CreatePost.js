@@ -75,6 +75,7 @@ export const CreatePost = observer(() => {
               "You need to connect to Arcana before you can make posts with attachments",
             color: "teal",
           });
+          setIsPosting(false);
           return;
         }
         // Upload the files to Arcana
