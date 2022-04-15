@@ -103,7 +103,7 @@ export const UserProfile = observer(() => {
           user.nftAddress + ":" + nftId,
           process.env.REACT_APP_RARIBLE_BASE_URL
         ).href;
-        setFollowerNftUrl(raribleUrl);
+        setFollowerNftUrl(raribleUrl.toLowerCase());
       }
     };
     getFollowerNftUrl();
